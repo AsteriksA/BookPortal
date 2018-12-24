@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:persistence.properties")
@@ -23,8 +24,8 @@ public class PersistenceConfig {
 
 
     @Bean
-    public DataSource dataSource(@Value("${driver}") String driver, @Value("${url}") String url,
-                                 @Value("${user}") String user, @Value("${password}") String password) {
+    public DataSource dataSource(@Value("${jdbc.driver}") String driver, @Value("${jdbc.url}") String url,
+                                 @Value("${jdbc.user}") String user, @Value("${jdbc.password}") String password) {
 
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driver);
@@ -35,7 +36,10 @@ public class PersistenceConfig {
     }
 
     @Bean
-    public EntityManagerFactory entityManagerFactory(DataSource dataSource) {
+    public EntityManagerFactory entityManagerFactory(DataSource dataSource,
+                                                     @Value("${hibernate.hbm2ddl.auto}") String ddl,
+                                                     @Value("${hibernate.dialect}") String dialect,
+                                                     @Value("${hibernate.connection.pool_size}") String connPool) {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         jpaVendorAdapter.setGenerateDdl(true);
         jpaVendorAdapter.setShowSql(true);
@@ -44,6 +48,12 @@ public class PersistenceConfig {
         entityManagerFactory.setDataSource(dataSource);
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter);
         entityManagerFactory.setPackagesToScan("com.gold.model");
+        entityManagerFactory.setJpaProperties(jpaProperties(ddl, dialect, connPool));
+//        entityManagerFactory.setJpaProperties(new Properties() {{
+//            put("hibernate.hbm2ddl.auto", "update");
+//            put("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+//            put("hibernate.connection.pool_size", 10);
+//        }});
         entityManagerFactory.afterPropertiesSet();
         return entityManagerFactory.getObject();
     }
@@ -58,6 +68,14 @@ public class PersistenceConfig {
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslator() {
         return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+    private Properties jpaProperties(String ddl, String dialect, String connPool){
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", ddl);
+        properties.setProperty("hibernate.dialect", dialect);
+        properties.setProperty("hibernate.connection.pool_size", connPool);
+        return properties;
     }
 
 }
