@@ -20,6 +20,7 @@ public class Role {
 
     private String role;
 
+    /*ADMIN, USER, ANONYMOUS, MODERATOR*/
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
