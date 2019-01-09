@@ -1,5 +1,7 @@
 package com.gold.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.gold.view.View;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,14 +23,17 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(unique = true, nullable = false)
     @NotBlank(message = "Name is required")
     private String name;
 
+    @JsonView(View.Internal.class)
     @NotNull
     @Size(min = 6)
     private String password;
 
     @Email
+    @Column(unique = true, nullable = false)
     private String email;
 
     @ManyToMany

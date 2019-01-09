@@ -21,29 +21,39 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> getAll() {
+    public List<Role> findAll() {
         return roleRepository.findAll();
     }
 
     @Override
-    public Role getRoleByName(String name) {
+    public Role findByName(String name) {
         return roleRepository.findByName(name);
     }
 
     @Override
-    public Role getRoleById(Long id) {
+    public Role findById(Long id) {
         return roleRepository.findById(id).orElse(null);
     }
 
     @Override
     @Transactional
-    public void addRole(Role role) {
+    public void addEntity(Role role) {
         roleRepository.save(role);
     }
 
     @Override
     @Transactional
-    public void removeRole(Long id) {
+    public void removeEntity(Long id) {
         roleRepository.deleteById(id);
+    }
+
+//    TODO
+    @Override
+    public void updateEntity(Long id, Role role) {
+       Role oldRole = findById(id);
+
+        if (oldRole != null) {
+
+        }
     }
 }

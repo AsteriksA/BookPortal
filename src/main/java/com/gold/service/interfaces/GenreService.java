@@ -5,9 +5,9 @@ import com.gold.model.Genre;
 
 import java.util.List;
 
-public interface GenreService {
+public interface GenreService extends BaseService<Genre, Long> {
 
     Genre findByName(String name);
 
-    List<Book> getAllBooks(Long id);
+    List<Book> findAllBooks(Long id);
 }

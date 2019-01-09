@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
 
-    Author findByFirstNameLikeOrSecondNameLike(String firstName, String secondName);
+    List<Author> findByFirstNameLikeOrSecondNameLike(String firstName, String secondName);
 
-    @Query("SELECT a.books FROM Author a JOIN FETCH a.books WHERE a.id= :id")
-    List<Book> getAllBooks(Long id);
+//    @Query("SELECT a.books FROM Author a JOIN FETCH a.books WHERE a.id= :id")
+//    List<Book> findAllBooks(Long id);
 
 }

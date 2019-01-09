@@ -1,6 +1,8 @@
 package com.gold.model;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.gold.view.View;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +15,18 @@ import java.util.Set;
 @Entity
 @Table(name="books")
 @Getter @Setter @NoArgsConstructor
+
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = "allJoinButContent", attributeNodes = {
+                @NamedAttributeNode("genre"),
+                @NamedAttributeNode("publisher")
+        }),
+        @NamedEntityGraph(name = "allJoins", attributeNodes = {
+                @NamedAttributeNode("genre"),
+                @NamedAttributeNode("publisher"),
+                @NamedAttributeNode("content")
+        })
+})
 public class Book {
 
     @Id()
@@ -20,6 +34,7 @@ public class Book {
     @Column(name = "book_id")
     private Long id;
 
+    @JsonView(View.Public.class)
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "books")
@@ -37,9 +52,10 @@ public class Book {
     @DateTimeFormat(pattern = "yyyy")
     private Date publisherYear;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] content;
+    @JsonView(View.Public.class)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "contents_id")
+    private BookContent bookContent;
 
     @Column(length = 1048576)
     private byte[] image;

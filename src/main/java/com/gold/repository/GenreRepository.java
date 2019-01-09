@@ -13,6 +13,6 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     Genre findByName(String name);
 
-    @Query("SELECT g.books FROM Genre g JOIN FETCH g.books WHERE g.id=:id")
-    List<Book> getAllBooks(Long id);
+//    @Query("SELECT g.books FROM Genre g JOIN FETCH g.books WHERE g.id=:id")
+//    List<Book> findAllBooks(Long id);
 }

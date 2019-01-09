@@ -4,15 +4,7 @@ import com.gold.model.Role;
 
 import java.util.List;
 
-public interface RoleService {
+public interface RoleService extends BaseService<Role, Long> {
 
-    List<Role> getAll();
-
-    Role getRoleByName(String name);
-
-    Role getRoleById(Long id);
-
-    void addRole(Role role);
-
-    void removeRole(Long id);
+    Role findByName(String name);
 }

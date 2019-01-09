@@ -1,6 +1,8 @@
 package com.gold.repository;
 
 import com.gold.model.Book;
+import com.gold.model.Genre;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,10 +17,13 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findByAuthors(String author);
 
-    List<Book> findByGenre(String genre);
+    List<Book> findByGenre(Genre genre);
 
-    @Query("SELECT b FROM Book b JOIN FETCH b.content WHERE b.id = (:id)")
-    Book findByIdAndFetchContentEagerly(@Param("id") Long id);
+    @EntityGraph(value = "allJoins", type = EntityGraph.EntityGraphType.LOAD)
+    Book findBookById(Long id);
+
+//    @Query("SELECT b FROM Book b JOIN FETCH b.content WHERE b.id = (:id)")
+//    Book findByIdAndFetchContentEagerly(@Param("id") Long id);
 
 
 

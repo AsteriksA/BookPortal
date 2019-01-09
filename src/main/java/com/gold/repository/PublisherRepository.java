@@ -13,7 +13,7 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
 
     Publisher findByName(String name);
 
-    @Query("SELECT p.books FROM Publisher p JOIN FETCH p.books WHERE p.id=:id")
-    List<Book> getAllBooks(Long id);
+//    @Query("SELECT p.books FROM Publisher p JOIN FETCH p.books WHERE p.id=:id")
+//    List<Book> getAllBooks(Long id);
 
 }

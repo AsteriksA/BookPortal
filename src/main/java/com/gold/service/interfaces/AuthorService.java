@@ -5,14 +5,10 @@ import com.gold.model.Book;
 
 import java.util.List;
 
-public interface AuthorService {
+public interface AuthorService extends BaseService<Author, Long> {
 
-    List<Author> getAll();
+    List<Author> findByFirstNameAndSecondName(String firstName, String secondName);
 
-    Author getByFirstNameAndSecondName(String firstName, String secondName);
-
-    Author getById(Long id);
-
-    List<Book> getAllBooks(Long id);
+    List<Book> findAllBooks(Long id);
 
 }

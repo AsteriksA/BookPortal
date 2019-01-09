@@ -5,9 +5,9 @@ import com.gold.model.Publisher;
 
 import java.util.List;
 
-public interface PublisherService {
+public interface PublisherService extends BaseService<Publisher, Long> {
 
     Publisher findByName(String name);
 
-    List<Book> getAllBooks(Long id);
+    List<Book> findAllBooks(Long id);
 }

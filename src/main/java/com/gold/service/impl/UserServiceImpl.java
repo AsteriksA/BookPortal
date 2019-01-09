@@ -3,7 +3,6 @@ package com.gold.service.impl;
 import com.gold.model.User;
 import com.gold.repository.UserRepository;
 import com.gold.service.interfaces.UserService;
-import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,41 +21,46 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Override
-    public User getUserByName(String name) {
+    public User findByName(String name) {
         return userRepository.findByName(name);
     }
 
     @Override
-    public User getUserById(Long id) {
+    public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
 
     @Override
     @Transactional
-    public void addUser(User user) {
+    public void addEntity(User user) {
         userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void removeUser(Long id) {
+    public void removeEntity(Long id) {
         userRepository.deleteById(id);
     }
 
 //    TODO
     @Override
     @Transactional
-    public void updateUser(Long id) {
+    public void updateEntity(Long id, User user) {
+
+        User olduser = findById(id);
+        if (olduser != null) {
+
+        }
         throw new UnsupportedOperationException();
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,7 +28,38 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
-    public List<Book> getAllBooks(Long id) {
-        return publisherRepository.getAllBooks(id);
+    public List<Book> findAllBooks(Long id) {
+        List<Book> books= null;
+        Publisher publisher = findById(id);
+
+        if (publisher != null) {
+            books = new ArrayList(publisher.getBooks());
+        }
+        return books;
+    }
+
+    @Override
+    public List<Publisher> findAll() {
+        return publisherRepository.findAll();
+    }
+
+    @Override
+    public Publisher findById(Long id) {
+        return publisherRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void addEntity(Publisher entity) {
+        publisherRepository.save(entity);
+    }
+
+    @Override
+    public void removeEntity(Long id) {
+        publisherRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateEntity(Long id, Publisher entity) {
+        throw new UnsupportedOperationException();
     }
 }
