@@ -1,23 +1,35 @@
 package com.gold.model;
 
-
-import com.fasterxml.jackson.annotation.JsonView;
-import com.gold.view.View;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name="books")
-@Getter @Setter @NoArgsConstructor
-
+@Getter
+@Setter
+@Table(name = "books")
 @NamedEntityGraphs({
-        @NamedEntityGraph(name = "allJoinButContent", attributeNodes = {
+        @NamedEntityGraph(name = "withoutBookContent", attributeNodes = {
                 @NamedAttributeNode("genre"),
                 @NamedAttributeNode("publisher")
         }),
@@ -31,10 +43,8 @@ public class Book {
 
     @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id")
     private Long id;
 
-    @JsonView(View.Public.class)
     private String name;
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "books")
@@ -52,7 +62,6 @@ public class Book {
     @DateTimeFormat(pattern = "yyyy")
     private Date publisherYear;
 
-    @JsonView(View.Public.class)
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "contents_id")
     private BookContent bookContent;
@@ -70,6 +79,5 @@ public class Book {
     private Integer rating;
 
     private Integer voteCount;
-
 }
 

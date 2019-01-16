@@ -1,20 +1,23 @@
 package com.gold.model;
 
-
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "book_contents")
-@Getter @Setter @NoArgsConstructor
 public class BookContent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="contents_id")
     private Long id;
 
     private byte[] content;
