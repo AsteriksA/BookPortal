@@ -1,13 +1,8 @@
 package com.gold.service.interfaces;
 
-import com.gold.model.Book;
-import com.gold.model.Genre;
+import com.gold.dto.GenreDto;
 
-import java.util.List;
+public interface GenreService extends BaseService<GenreDto, Long> {
 
-public interface GenreService extends BaseService<Genre, Long> {
-
-    Genre findByName(String name);
-
-    List<Book> findAllBooks(Long id);
+    GenreDto findByName(String name);
 }

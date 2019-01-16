@@ -1,11 +1,11 @@
 package com.gold.service.interfaces;
 
-import com.gold.model.User;
+import com.gold.dto.UserDto;
 
-public interface UserService extends BaseService<User, Long> {
+public interface UserService extends BaseService<UserDto, Long> {
 
-    User findUserByEmail(String email);
+    UserDto findUserByEmail(String email);
 
-    User findByName(String name);
+    UserDto findByName(String name);
 
 }

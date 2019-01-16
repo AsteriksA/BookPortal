@@ -1,14 +1,10 @@
 package com.gold.service.interfaces;
 
-import com.gold.model.Author;
-import com.gold.model.Book;
+import com.gold.dto.AuthorDto;
 
 import java.util.List;
 
-public interface AuthorService extends BaseService<Author, Long> {
+public interface AuthorService extends BaseService<AuthorDto, Long> {
 
-    List<Author> findByFirstNameAndSecondName(String firstName, String secondName);
-
-    List<Book> findAllBooks(Long id);
-
+    List<AuthorDto> findByFirstNameAndSecondName(String firstName, String secondName);
 }

@@ -1,28 +1,16 @@
 package com.gold.service.interfaces;
 
-import com.gold.model.Book;
-import com.gold.model.Genre;
+import com.gold.dto.BookDto;
 
 import java.util.List;
 
-public interface BookService extends BaseService<Book, Long> {
+public interface BookService extends BaseService<BookDto, Long> {
 
-    List<Book> findByName(String name);
+    List<BookDto> findByName(String name);
 
-    List<Book> findByAuthors(String author);
+    List<BookDto> findByNameFromSearch(String searchName);
 
-    List<Book> findByGenre(Genre genre);
+    List<BookDto> findByGenre(String genreName);
 
-//    Book getWholeBook(Long id);
-
-    byte[] getContent(Long id);
-
-
-
-//    @Query("SELECT b FROM Book b JOIN FETCH b.content WHERE b.id = (:id)")
-//    Book findByIdAndFetchContentEagerly(@Param("id") Long id);
-
-
-
-
+    List<BookDto> findByPublisher(String publisherName);
 }

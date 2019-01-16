@@ -8,9 +8,9 @@ public interface BaseService <T, ID> {
 
     T findById(ID id);
 
-    void addEntity(T entity);
+    void add(T entity);
 
-    void removeEntity(ID id);
+    void remove(ID id);
 
-    void updateEntity(ID id, T entity);
+    void update(ID id, T entity);
 }

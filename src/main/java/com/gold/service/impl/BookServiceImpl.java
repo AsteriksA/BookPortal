@@ -1,9 +1,11 @@
 package com.gold.service.impl;
 
+import com.gold.dto.BookDto;
 import com.gold.model.Book;
-import com.gold.model.Genre;
 import com.gold.repository.BookRepository;
 import com.gold.service.interfaces.BookService;
+import com.gold.util.EntityUtils;
+import com.gold.util.MapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,59 +17,74 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
 
     private BookRepository bookRepository;
+    private MapperUtils mapper;
 
     @Autowired
-    public BookServiceImpl(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository, MapperUtils mapper) {
         this.bookRepository = bookRepository;
+        this.mapper = mapper;
     }
 
     @Override
-    public List<Book> findByName(String name) {
-        return bookRepository.findByNameLike(name);
+    public List<BookDto> findAll() {
+        List<Book> books = bookRepository.findAll();
+        return mapper.convertToListDto(books, BookDto.class);
     }
 
     @Override
-    public List<Book> findByAuthors(String author) {
-        return bookRepository.findByAuthors(author);
+    public List<BookDto> findByName(String name) {
+        List<Book> books = bookRepository.findByNameLike(name);
+        return mapper.convertToListDto(books, BookDto.class);
+    }
+
+//    TODO: change this method
+    @Override
+    public List<BookDto> findByNameFromSearch(String searchName) {
+        List<Book> books = bookRepository.findByNameFromSearch(searchName);
+        return mapper.convertToListDto(books, BookDto.class);
     }
 
     @Override
-    public List<Book> findByGenre(Genre genre) {
-        return bookRepository.findByGenre(genre);
+    public List<BookDto> findByGenre(String genreName) {
+        List<Book> books = bookRepository.findByGenre_Name(genreName);
+        return mapper.convertToListDto(books, BookDto.class);
     }
 
     @Override
-    public byte[] getContent(Long id) {
-        return bookRepository.findBookById(id).getBookContent().getContent();
+    public List<BookDto> findByPublisher(String publisherName) {
+        List<Book> books = bookRepository.findByPublisher_Name(publisherName);
+        return mapper.convertToListDto(books, BookDto.class);
     }
 
     @Override
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public BookDto findById(Long id) {
+        Book book = getEntity(id);
+        return mapper.convertToDto(book, BookDto.class);
     }
 
     @Override
-    public Book findById(Long id) {
-        return bookRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public void addEntity(Book entity) {
+    @Transactional
+    public void add(BookDto book) {
+        Book entity = mapper.convertToEntity(book, Book.class);
         bookRepository.save(entity);
     }
 
     @Override
-    public void removeEntity(Long id) {
+    @Transactional
+    public void remove(Long id) {
         bookRepository.deleteById(id);
     }
 
     @Override
-    public void updateEntity(Long id, Book entity) {
-        throw new UnsupportedOperationException();
+    @Transactional
+    public void update(Long id, BookDto book) {
+        Book entity = getEntity(id);
+        EntityUtils.checkNull(entity);
+        mapper.convertToEntity(book, entity);
+        bookRepository.save(entity);
     }
 
-//    @Override
-//    public Book getWholeBook(Long id) {
-//
-//    }
+    private Book getEntity(Long id) {
+        return bookRepository.findById(id).orElse(null);
+    }
 }

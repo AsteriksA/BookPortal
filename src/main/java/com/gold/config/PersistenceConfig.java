@@ -22,11 +22,11 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class PersistenceConfig {
 
-
     @Bean
-    public DataSource dataSource(@Value("${jdbc.driver}") String driver, @Value("${jdbc.url}") String url,
-                                 @Value("${jdbc.user}") String user, @Value("${jdbc.password}") String password) {
-
+    public DataSource dataSource(@Value("${jdbc.driver}") String driver,
+                                 @Value("${jdbc.url}") String url,
+                                 @Value("${jdbc.user}") String user,
+                                 @Value("${jdbc.password}") String password) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driver);
         dataSource.setUrl(url);
@@ -49,11 +49,6 @@ public class PersistenceConfig {
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter);
         entityManagerFactory.setPackagesToScan("com.gold.model");
         entityManagerFactory.setJpaProperties(jpaProperties(ddl, dialect, connPool));
-//        entityManagerFactory.setJpaProperties(new Properties() {{
-//            put("hibernate.hbm2ddl.auto", "update");
-//            put("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-//            put("hibernate.connection.pool_size", 10);
-//        }});
         entityManagerFactory.afterPropertiesSet();
         return entityManagerFactory.getObject();
     }

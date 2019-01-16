@@ -1,5 +1,6 @@
 package com.gold.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -10,9 +11,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import java.util.Properties;
 
-
-/*Analog dispatcher-servlet.xml*/
-
+//Analog dispatcher-servlet.xml
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.gold")
@@ -37,5 +36,4 @@ public class WebConfig implements WebMvcConfigurer {
         }});
         return configurer;
     }
-
 }

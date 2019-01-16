@@ -1,14 +1,15 @@
 package com.gold.service.impl;
 
+import com.gold.dto.AuthorDto;
 import com.gold.model.Author;
-import com.gold.model.Book;
 import com.gold.repository.AuthorRepository;
 import com.gold.service.interfaces.AuthorService;
+import com.gold.util.EntityUtils;
+import com.gold.util.MapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,61 +17,53 @@ import java.util.List;
 public class AuthorServiceImpl implements AuthorService {
 
     private AuthorRepository authorRepository;
+    private MapperUtils mapper;
 
     @Autowired
-    public AuthorServiceImpl(AuthorRepository authorRepository) {
+    public AuthorServiceImpl(AuthorRepository authorRepository, MapperUtils mapper) {
         this.authorRepository = authorRepository;
+        this.mapper = mapper;
     }
 
     @Override
-    public List<Author> findAll() {
-        return authorRepository.findAll();
-    }
-
-//    TODO
-//    public Author findByName(String name) {
-//        findByFirstNameAndSecondName(name, null); /*or second argument must be "" ??*/
-//    }
-
-    @Override
-    public void addEntity(Author author) {
-        authorRepository.save(author);
+    public List<AuthorDto> findAll() {
+        return mapper.convertToListDto(authorRepository.findAll(), AuthorDto.class);
     }
 
     @Override
-    public void removeEntity(Long id) {
+    @Transactional
+    public void add(AuthorDto author) {
+        authorRepository.save(mapper.convertToEntity(author, Author.class));
+    }
+
+    @Override
+    @Transactional
+    public void remove(Long id) {
         authorRepository.deleteById(id);
     }
 
-//    TODO:
     @Override
-    public void updateEntity(Long id, Author entity) {
-        Author oldAuthor = findById(id);
-
-        if (oldAuthor != null) {
-
-        }
+    @Transactional
+    public void update(Long id, AuthorDto author) {
+        Author entity = getAuthor(id);
+        EntityUtils.checkNull(entity);
+        mapper.convertToEntity(author, entity);
+        authorRepository.save(entity);
     }
 
-    //    TODO: check return value if the first or second argument will be ""
+    //    TODO: change the method
     @Override
-    public List<Author> findByFirstNameAndSecondName(String firstName, String secondName) {
-        return authorRepository.findByFirstNameLikeOrSecondNameLike(firstName, secondName);
+    public List<AuthorDto> findByFirstNameAndSecondName(String firstName, String secondName) {
+        List<Author> authors = authorRepository.findByFirstNameOrSecondName(firstName, secondName);
+        return mapper.convertToListDto(authors, AuthorDto.class);
     }
 
     @Override
-    public Author findById(Long id) {
+    public AuthorDto findById(Long id) {
+        return mapper.convertToDto(getAuthor(id), AuthorDto.class);
+    }
+
+    private Author getAuthor(Long id) {
         return authorRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public List<Book> findAllBooks(Long id) {
-        List<Book> books = null;
-        Author author = findById(id);
-
-        if (author != null) {
-            books = new ArrayList(author.getBooks());
-        }
-        return books;
     }
 }

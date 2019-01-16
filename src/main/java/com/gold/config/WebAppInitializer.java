@@ -4,14 +4,14 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-    /*Analog web.xml*/
-
+//    TODO: check this method
+//    Analog web.xml
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{/*PersistenceConfig.class*/};
+        return new Class<?>[]{AppConfig.class/*PersistenceConfig.class*/};
     }
 
-    /*return class describes dispatcher servlet*/
+//    return class describes dispatcher servlet
     @Override
     protected Class<?>[] getServletConfigClasses() {
         return new Class<?>[]{WebConfig.class};
