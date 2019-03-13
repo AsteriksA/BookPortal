@@ -1,10 +1,12 @@
 package com.gold.util;
 
-public class EntityUtils {
+import javax.persistence.EntityNotFoundException;
 
-    public static void checkNull(Object entity) {
+public final class EntityUtils {
+
+    public static void isNull(Object entity) {
         if (entity == null) {
-            throw new IllegalArgumentException();
+            throw new EntityNotFoundException();
         }
     }
 }

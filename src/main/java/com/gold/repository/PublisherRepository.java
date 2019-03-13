@@ -1,11 +1,11 @@
 package com.gold.repository;
 
-import com.gold.model.Publisher;
+import com.gold.model.PublisherEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PublisherRepository extends JpaRepository<Publisher, Long> {
+public interface PublisherRepository extends JpaRepository<PublisherEntity, Long> {
 
-    Publisher findByName(String name);
+    PublisherEntity findByName(String name);
 }

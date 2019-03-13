@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @Table(name = "book_contents")
-public class BookContent {
+public class BookContentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +23,5 @@ public class BookContent {
     private byte[] content;
 
     @OneToOne(mappedBy = "content")
-    private Book book;
+    private BookEntity bookEntity;
 }

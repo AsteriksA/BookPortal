@@ -1,13 +1,16 @@
 package com.gold.repository;
 
-import com.gold.model.User;
+import com.gold.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-    User findByEmail(String email);
+    UserEntity findByEmail(String email);
 
-    User findByName(String name);
+    Optional<UserEntity> findByActivationCode(String code);
+    Optional<UserEntity> findByName(String name);
 }

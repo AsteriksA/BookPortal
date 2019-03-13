@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PublisherDto {
+public class Publisher {
 
     @JsonView(View.Public.class)
     private String name;

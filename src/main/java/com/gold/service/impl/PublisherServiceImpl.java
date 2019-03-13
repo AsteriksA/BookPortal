@@ -1,56 +1,48 @@
 package com.gold.service.impl;
 
-import com.gold.dto.PublisherDto;
-import com.gold.model.Publisher;
+import com.gold.dto.Publisher;
+import com.gold.model.PublisherEntity;
 import com.gold.repository.PublisherRepository;
 import com.gold.service.interfaces.PublisherService;
 import com.gold.util.EntityUtils;
-import com.gold.util.MapperUtils;
+import com.gold.util.EntityMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class PublisherServiceImpl implements PublisherService {
 
-    private PublisherRepository publisherRepository;
+    private final PublisherRepository publisherRepository;
+    private final EntityMapper mapper;
 
-    private MapperUtils mapper;
-
-    @Autowired
-    public PublisherServiceImpl(PublisherRepository publisherRepository, MapperUtils mapper) {
-        this.publisherRepository = publisherRepository;
-        this.mapper = mapper;
+    @Override
+    public List<Publisher> findAll() {
+        List<PublisherEntity> publisherEntities = publisherRepository.findAll();
+        return mapper.convertToDto(publisherEntities, Publisher.class);
     }
 
     @Override
-    public List<PublisherDto> findAll() {
-        List<Publisher> publishers = publisherRepository.findAll();
-        return publishers.stream()
-                .map(publisher -> mapper.convertToDto(publisher, PublisherDto.class))
-                .collect(Collectors.toList());
+    public Publisher findByName(String name) {
+        PublisherEntity publisherEntity = publisherRepository.findByName(name);
+        return mapper.convertToDto(publisherEntity, Publisher.class);
     }
 
     @Override
-    public PublisherDto findByName(String name) {
-        Publisher publisher = publisherRepository.findByName(name);
-        return mapper.convertToDto(publisher, PublisherDto.class);
-    }
-
-    @Override
-    public PublisherDto findById(Long id) {
-        Publisher publisher = getPublisher(id);
-        return mapper.convertToDto(publisher, PublisherDto.class);
+    public Publisher findOne(Long id) {
+        PublisherEntity publisherEntity = getPublisher(id);
+        return mapper.convertToDto(publisherEntity, Publisher.class);
     }
 
     @Override
     @Transactional
-    public void add(PublisherDto publisher) {
-        Publisher entity = mapper.convertToEntity(publisher, Publisher.class);
+    public void add(Publisher publisher) {
+        PublisherEntity entity = mapper.convertToEntity(publisher, PublisherEntity.class);
         publisherRepository.save(entity);
     }
 
@@ -62,14 +54,14 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     @Transactional
-    public void update(Long id, PublisherDto publisher) {
-        Publisher entity = getPublisher(id);
-        EntityUtils.checkNull(entity);
+    public void update(Long id, Publisher publisher) {
+        PublisherEntity entity = getPublisher(id);
+        EntityUtils.isNull(entity);
         mapper.convertToEntity(publisher, entity);
         publisherRepository.save(entity);
     }
 
-    private Publisher getPublisher(Long id) {
+    private PublisherEntity getPublisher(Long id) {
         return publisherRepository.findById(id).orElse(null);
     }
 }

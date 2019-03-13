@@ -1,17 +1,13 @@
 package com.gold.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -19,10 +15,14 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
+//@Data
 @Getter
 @Setter
+@Builder
 @Table(name = "users")
-public class User {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,7 @@ public class User {
     @NotBlank(message = "Name is required")
     private String name;
 
+//    must be hashpassword
     @NotNull
     @Size(min = 6)
     private String password;
@@ -40,10 +41,18 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @ManyToMany
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    private String activationCode;
+
+    @ElementCollection(targetClass = RoleEntity.class, fetch = FetchType.EAGER)
+    @CollectionTable(name="user_role",
+            joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<RoleEntity> roles;
+
+    @Enumerated(EnumType.STRING)
+    private State state;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    Set<TokenEntity> tokens;
 
 }

@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GenreDto {
+public class Genre {
 
     @JsonView(View.Public.class)
     private String name;

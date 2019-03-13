@@ -1,17 +1,19 @@
 package com.gold.repository;
 
-import com.gold.model.Author;
+import com.gold.model.AuthorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface AuthorRepository extends JpaRepository<Author, Long> {
+public interface AuthorRepository extends JpaRepository<AuthorEntity, Long> {
 
-    List<Author> findByFirstNameOrSecondName(String firstName, String secondName);
+    List<AuthorEntity> findByFirstNameOrLastName(String firstName, String secondName);
 
-//    @Query("SELECT a.books FROM Author a JOIN FETCH a.books WHERE a.id= :id")
-//    List<Book> findAllBooks(Long id);
+    AuthorEntity findByFirstNameAndLastName(String firstName, String secondName);
+
+//    @Query("SELECT a.bookEntities FROM AuthorEntity a JOIN FETCH a.bookEntities WHERE a.id= :id")
+//    List<BookEntity> findAllBooks(Long id);
 
 }

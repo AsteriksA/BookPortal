@@ -1,8 +1,8 @@
 package com.gold.service.interfaces;
 
-import com.gold.dto.PublisherDto;
+import com.gold.dto.Publisher;
 
-public interface PublisherService extends BaseService<PublisherDto, Long> {
+public interface PublisherService extends BaseService<Publisher, Long> {
 
-    PublisherDto findByName(String name);
+    Publisher findByName(String name);
 }

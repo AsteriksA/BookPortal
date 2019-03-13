@@ -72,5 +72,4 @@ public class PersistenceConfig {
         properties.setProperty("hibernate.connection.pool_size", connPool);
         return properties;
     }
-
 }
