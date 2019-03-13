@@ -1,72 +1,119 @@
 package com.gold.service.impl;
 
-import com.gold.dto.BookDto;
-import com.gold.model.Book;
+import com.gold.dto.Book;
+import com.gold.model.AuthorEntity;
+import com.gold.model.BookEntity;
+import com.gold.model.GenreEntity;
+import com.gold.model.PublisherEntity;
+import com.gold.repository.AuthorRepository;
 import com.gold.repository.BookRepository;
+import com.gold.repository.GenreRepository;
+import com.gold.repository.PublisherRepository;
 import com.gold.service.interfaces.BookService;
 import com.gold.util.EntityUtils;
-import com.gold.util.MapperUtils;
+import com.gold.util.EntityMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BookServiceImpl implements BookService {
 
-    private BookRepository bookRepository;
-    private MapperUtils mapper;
+    private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
+    private final PublisherRepository publisherRepository;
+    private final EntityMapper mapper;
 
-    @Autowired
-    public BookServiceImpl(BookRepository bookRepository, MapperUtils mapper) {
-        this.bookRepository = bookRepository;
-        this.mapper = mapper;
+      @Override
+    public List<Book> findAll() {
+        List<BookEntity> bookEntities = bookRepository.findAll();
+        return mapper.convertToDto(bookEntities, Book.class);
     }
 
     @Override
-    public List<BookDto> findAll() {
-        List<Book> books = bookRepository.findAll();
-        return mapper.convertToListDto(books, BookDto.class);
-    }
-
-    @Override
-    public List<BookDto> findByName(String name) {
-        List<Book> books = bookRepository.findByNameLike(name);
-        return mapper.convertToListDto(books, BookDto.class);
+    public List<Book> findByName(String name) {
+        List<BookEntity> bookEntities = bookRepository.findByNameLike(name);
+        return mapper.convertToDto(bookEntities, Book.class);
     }
 
 //    TODO: change this method
     @Override
-    public List<BookDto> findByNameFromSearch(String searchName) {
-        List<Book> books = bookRepository.findByNameFromSearch(searchName);
-        return mapper.convertToListDto(books, BookDto.class);
+    public List<Book> findByNameFromSearch(String searchName) {
+        List<BookEntity> bookEntities = bookRepository.findByNameFromSearch(searchName);
+        return mapper.convertToDto(bookEntities, Book.class);
     }
 
     @Override
-    public List<BookDto> findByGenre(String genreName) {
-        List<Book> books = bookRepository.findByGenre_Name(genreName);
-        return mapper.convertToListDto(books, BookDto.class);
+    public List<Book> findByGenre(String genreName) {
+        List<BookEntity> bookEntities = bookRepository.findByGenre_Name(genreName);
+        return mapper.convertToDto(bookEntities, Book.class);
     }
 
     @Override
-    public List<BookDto> findByPublisher(String publisherName) {
-        List<Book> books = bookRepository.findByPublisher_Name(publisherName);
-        return mapper.convertToListDto(books, BookDto.class);
+    public List<Book> findByPublisher(String publisherName) {
+        List<BookEntity> bookEntities = bookRepository.findByPublisher_Name(publisherName);
+        return mapper.convertToDto(bookEntities, Book.class);
     }
 
     @Override
-    public BookDto findById(Long id) {
-        Book book = getEntity(id);
-        return mapper.convertToDto(book, BookDto.class);
+    public Book findOne(Long id) {
+        BookEntity bookEntity = getEntity(id);
+        return mapper.convertToDto(bookEntity, Book.class);
     }
 
     @Override
     @Transactional
-    public void add(BookDto book) {
-        Book entity = mapper.convertToEntity(book, Book.class);
+    public void add(Book book) {
+        BookEntity entity = mapper.convertToEntity(book, BookEntity.class);
+        setAuthors(entity);
+        setGenre(entity);
+        setPublisher(entity);
         bookRepository.save(entity);
+    }
+
+    private void setPublisher(BookEntity entity) {
+        PublisherEntity sourcePublisher = entity.getPublisher();
+        PublisherEntity persistPublisher = publisherRepository.findByName(sourcePublisher.getName());
+        if (persistPublisher != null) {
+            persistPublisher.getBooks().add(entity);
+            entity.setPublisher(persistPublisher);
+        }
+    }
+
+    private void setGenre(BookEntity entity) {
+        GenreEntity sourceGenre = entity.getGenre();
+        GenreEntity persistGenre = genreRepository.findByName(sourceGenre.getName());
+        if (persistGenre != null) {
+            persistGenre.getBooks().add(entity);
+            entity.setGenre(persistGenre);
+        }
+    }
+
+    private void setAuthors(BookEntity entity) {
+        Set<AuthorEntity> sourceAuthors = entity.getAuthors();
+        Set<AuthorEntity> authorEntities=new HashSet<>();
+
+        for (AuthorEntity author : sourceAuthors) {
+            AuthorEntity persistAuthor =
+                    authorRepository.findByFirstNameAndLastName(author.getFirstName(),author.getLastName());
+            if (persistAuthor != null) {
+                persistAuthor.getBooks().add(entity);
+                author = persistAuthor;
+            } else {
+                author.setBooks(new HashSet<>());
+                author.getBooks().add(entity);
+            }
+            authorEntities.add(author);
+        }
+        entity.setAuthors(authorEntities);
     }
 
     @Override
@@ -77,14 +124,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void update(Long id, BookDto book) {
-        Book entity = getEntity(id);
-        EntityUtils.checkNull(entity);
+    public void update(Long id, Book book) {
+        BookEntity entity = getEntity(id);
+        EntityUtils.isNull(entity);
         mapper.convertToEntity(book, entity);
         bookRepository.save(entity);
     }
 
-    private Book getEntity(Long id) {
+    private BookEntity getEntity(Long id) {
         return bookRepository.findById(id).orElse(null);
     }
 }

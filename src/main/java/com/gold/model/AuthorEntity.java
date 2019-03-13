@@ -18,7 +18,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "authors")
-public class Author {
+public class AuthorEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +26,11 @@ public class Author {
 
     private String firstName;
 
-    private String secondName;
+    private String lastName;
 
     @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "authors_books",
             joinColumns = @JoinColumn(name = "authors_id"),
             inverseJoinColumns = @JoinColumn(name = "books_id"))
-    private Set<Book> books;
+    private Set<BookEntity> books;
 }

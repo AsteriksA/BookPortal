@@ -5,8 +5,9 @@ import com.gold.view.View;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
-public class RoleDto {
+@Getter
+@Setter
+public class Role {
 
     @JsonView(View.Internal.class)
     private String role;

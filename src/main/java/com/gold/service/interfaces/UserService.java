@@ -1,11 +1,13 @@
 package com.gold.service.interfaces;
 
-import com.gold.dto.UserDto;
+import com.gold.dto.User;
+import com.gold.form.UserForm;
 
-public interface UserService extends BaseService<UserDto, Long> {
+public interface UserService extends BaseService<User, Long> {
 
-    UserDto findUserByEmail(String email);
+    User findUserByEmail(String email);
 
-    UserDto findByName(String name);
+    User findByName(String name);
 
+    void signUp(UserForm userForm);
 }

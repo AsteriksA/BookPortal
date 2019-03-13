@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookContentDto {
+public class BookContent {
 
     @JsonView(View.Public.class)
     private byte[] content;

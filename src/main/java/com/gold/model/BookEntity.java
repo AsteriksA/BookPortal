@@ -27,15 +27,15 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@Table(name = "bookEntities")
+@Table(name = "books")
 @NamedEntityGraphs({
         @NamedEntityGraph(name = "withoutBookContent", attributeNodes = {
-                @NamedAttributeNode("genreEntity"),
-                @NamedAttributeNode("publisherEntity")
+                @NamedAttributeNode("genre"),
+                @NamedAttributeNode("publisher")
         }),
         @NamedEntityGraph(name = "allJoins", attributeNodes = {
-                @NamedAttributeNode("genreEntity"),
-                @NamedAttributeNode("publisherEntity"),
+                @NamedAttributeNode("genre"),
+                @NamedAttributeNode("publisher"),
                 @NamedAttributeNode("content")
         })
 })
@@ -47,24 +47,24 @@ public class BookEntity {
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "bookEntities")
-    private Set<AuthorEntity> authorEntities;
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "books")
+    private Set<AuthorEntity> authors;
 
     @ManyToOne()
     @JoinColumn(name = "genre_id")
-    private GenreEntity genreEntity;
+    private GenreEntity genre;
 
     @ManyToOne()
     @JoinColumn(name = "publisher_id")
-    private PublisherEntity publisherEntity;
+    private PublisherEntity publisher;
 
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy")
     private Date publisherYear;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "contents_id")
-    private BookContentEntity bookContentEntity;
+    @JoinColumn(name = "content_id")
+    private BookContentEntity content;
 
     @Column(length = 1048576)
     private byte[] image;

@@ -9,18 +9,20 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class BookDto {
+public class Book {
+
+    private Long id;
 
     @JsonView(View.Public.class)
     private String name;
 
     @JsonView(View.Public.class)
-    private Set<AuthorDto> authors;
+    private Set<Author> authors;
 
     @JsonView(View.Public.class)
-    private GenreDto genre;
+    private Genre genre;
 
     @JsonView(View.Public.class)
-    private PublisherDto publisher;
+    private Publisher publisher;
 }
 

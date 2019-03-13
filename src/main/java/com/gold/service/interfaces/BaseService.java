@@ -6,7 +6,7 @@ public interface BaseService <T, ID> {
 
     List<T> findAll();
 
-    T findById(ID id);
+    T findOne(ID id);
 
     void add(T entity);
 

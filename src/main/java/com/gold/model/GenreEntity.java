@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "genres")
-public class Genre {
+public class GenreEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +24,5 @@ public class Genre {
     private String name;
 
     @OneToMany(mappedBy = "genre")
-    private Set<Book> books;
+    private Set<BookEntity> books;
 }

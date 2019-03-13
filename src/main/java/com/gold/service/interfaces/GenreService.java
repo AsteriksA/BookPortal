@@ -1,8 +1,8 @@
 package com.gold.service.interfaces;
 
-import com.gold.dto.GenreDto;
+import com.gold.dto.Genre;
 
-public interface GenreService extends BaseService<GenreDto, Long> {
+public interface GenreService extends BaseService<Genre, Long> {
 
-    GenreDto findByName(String name);
+    Genre findByName(String name);
 }

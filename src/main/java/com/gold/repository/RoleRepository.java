@@ -1,11 +1,11 @@
 package com.gold.repository;
 
-import com.gold.model.Role;
+import com.gold.model.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+//@Repository
+public interface RoleRepository /*extends JpaRepository<RoleEntity, Long> */{
 
-    Role findByName(String name);
+    RoleEntity findByName(String name);
 }

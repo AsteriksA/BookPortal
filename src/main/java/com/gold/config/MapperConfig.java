@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan("com.gold.util")
-public class AppConfig {
+public class MapperConfig {
 
     @Bean
     public ModelMapper modelMapper() {

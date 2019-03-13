@@ -1,10 +1,10 @@
 package com.gold.service.interfaces;
 
-import com.gold.dto.AuthorDto;
+import com.gold.dto.Author;
 
 import java.util.List;
 
-public interface AuthorService extends BaseService<AuthorDto, Long> {
+public interface AuthorService extends BaseService<Author, Long> {
 
-    List<AuthorDto> findByFirstNameAndSecondName(String firstName, String secondName);
+    List<Author> findByFirstNameAndSecondName(String firstName, String secondName);
 }

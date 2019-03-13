@@ -7,7 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthorDto {
+public class Author {
+
+    private Long id;
 
     @JsonView(View.Public.class)
     private String firstName;

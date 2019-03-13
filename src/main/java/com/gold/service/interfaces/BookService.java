@@ -1,16 +1,16 @@
 package com.gold.service.interfaces;
 
-import com.gold.dto.BookDto;
+import com.gold.dto.Book;
 
 import java.util.List;
 
-public interface BookService extends BaseService<BookDto, Long> {
+public interface BookService extends BaseService<Book, Long> {
 
-    List<BookDto> findByName(String name);
+    List<Book> findByName(String name);
 
-    List<BookDto> findByNameFromSearch(String searchName);
+    List<Book> findByNameFromSearch(String searchName);
 
-    List<BookDto> findByGenre(String genreName);
+    List<Book> findByGenre(String genreName);
 
-    List<BookDto> findByPublisher(String publisherName);
+    List<Book> findByPublisher(String publisherName);
 }

@@ -8,7 +8,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 //    Analog web.xml
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{AppConfig.class/*PersistenceConfig.class*/};
+        return new Class<?>[]{MapperConfig.class, WebSecurityConfig.class, PersistenceConfig.class};
     }
 
 //    return class describes dispatcher servlet

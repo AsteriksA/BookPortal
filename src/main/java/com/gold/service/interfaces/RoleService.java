@@ -1,9 +1,8 @@
 package com.gold.service.interfaces;
 
-import com.gold.dto.RoleDto;
-import com.gold.model.Role;
+import com.gold.dto.Role;
 
-public interface RoleService extends BaseService<RoleDto, Long> {
+public interface RoleService extends BaseService<Role, Long> {
 
-    RoleDto findByName(String name);
+    Role findByName(String name);
 }
