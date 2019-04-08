@@ -1,6 +1,7 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Publisher;
+import com.gold.form.UpdateUserForm;
 import com.gold.model.PublisherEntity;
 import com.gold.repository.PublisherRepository;
 import com.gold.service.interfaces.PublisherService;
@@ -52,9 +53,9 @@ public class PublisherServiceImpl implements PublisherService {
         publisherRepository.deleteById(id);
     }
 
-    @Override
+//    @Override
     @Transactional
-    public void update(Long id, Publisher publisher) {
+    public void update(Long id, UpdateUserForm publisher) {
         PublisherEntity entity = getPublisher(id);
         EntityUtils.isNull(entity);
         mapper.convertToEntity(publisher, entity);

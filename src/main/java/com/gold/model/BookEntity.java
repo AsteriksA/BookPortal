@@ -76,7 +76,7 @@ public class BookEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private Integer rating;
+    private Double rating;
 
     private Integer voteCount;
 }

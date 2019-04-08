@@ -1,6 +1,7 @@
 package com.gold.service.impl;
 
 import com.gold.dto.BookContent;
+import com.gold.form.UpdateUserForm;
 import com.gold.model.BookContentEntity;
 import com.gold.repository.BookContentRepository;
 import com.gold.service.interfaces.BookContentService;
@@ -41,7 +42,7 @@ public class BookContentServiceImpl implements BookContentService {
     @Override
     @Transactional
     public void remove(Long id) {
-        bookContentRepository.deleteById(id);
+        bookContentRepository.delete(getEntity(id));
     }
 
     @Override

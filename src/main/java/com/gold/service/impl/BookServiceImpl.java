@@ -1,6 +1,7 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Book;
+import com.gold.form.UpdateUserForm;
 import com.gold.model.AuthorEntity;
 import com.gold.model.BookEntity;
 import com.gold.model.GenreEntity;
@@ -13,7 +14,9 @@ import com.gold.service.interfaces.BookService;
 import com.gold.util.EntityUtils;
 import com.gold.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BookServiceImpl implements BookService {
@@ -35,19 +39,15 @@ public class BookServiceImpl implements BookService {
       @Override
     public List<Book> findAll() {
         List<BookEntity> bookEntities = bookRepository.findAll();
+        log.info("info get all books");
+        log.debug("debug get all books");
+        log.warn("warn get all books");
         return mapper.convertToDto(bookEntities, Book.class);
     }
 
     @Override
     public List<Book> findByName(String name) {
         List<BookEntity> bookEntities = bookRepository.findByNameLike(name);
-        return mapper.convertToDto(bookEntities, Book.class);
-    }
-
-//    TODO: change this method
-    @Override
-    public List<Book> findByNameFromSearch(String searchName) {
-        List<BookEntity> bookEntities = bookRepository.findByNameFromSearch(searchName);
         return mapper.convertToDto(bookEntities, Book.class);
     }
 
@@ -67,6 +67,11 @@ public class BookServiceImpl implements BookService {
     public Book findOne(Long id) {
         BookEntity bookEntity = getEntity(id);
         return mapper.convertToDto(bookEntity, Book.class);
+    }
+
+    @Override
+    public List<Book> findByAuthor(String authorName) {
+        return null;
     }
 
     @Override
@@ -131,7 +136,31 @@ public class BookServiceImpl implements BookService {
         bookRepository.save(entity);
     }
 
+    @Override
+    @Transactional
+    public void changeRating(Long id, Integer rating) {
+        BookEntity entity = getEntity(id);
+        Integer voteCount = entity.getVoteCount();
+        Double ratingCandidate = calculateRating(entity, voteCount, rating);
+        entity.setRating(ratingCandidate);
+        entity.setVoteCount(voteCount);
+        bookRepository.save(entity);
+    }
+
+    private Double calculateRating(BookEntity entity, Integer voteCount, Integer rating) {
+          return (entity.getRating()*voteCount+rating)/++voteCount;
+    }
+
     private BookEntity getEntity(Long id) {
-        return bookRepository.findById(id).orElse(null);
+//        return bookRepository.findById(id).orElse(null);
+        return bookRepository.findById(id).
+                orElseThrow(()->new UsernameNotFoundException("User doesn't exist"));
+    }
+
+    @Override
+    public List<Book> findBySearch(String param) {
+        String[] params = param.split(" ");
+        List<BookEntity> books = bookRepository.findBySearch(params);
+        return mapper.convertToDto(books, Book.class);
     }
 }

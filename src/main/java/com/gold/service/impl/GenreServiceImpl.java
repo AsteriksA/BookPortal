@@ -1,6 +1,7 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Genre;
+import com.gold.form.UpdateUserForm;
 import com.gold.model.GenreEntity;
 import com.gold.repository.GenreRepository;
 import com.gold.service.interfaces.GenreService;
