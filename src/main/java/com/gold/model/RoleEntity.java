@@ -14,7 +14,7 @@ import java.util.Set;
 
 
 public enum RoleEntity implements GrantedAuthority {
-    USER, ADMIN, ANONYMOUS, MODERATOR;
+    ROLE_USER, ROLE_ADMIN, ANONYMOUS, ROLE_MODERATOR;
 
     @Override
     public String getAuthority() {
