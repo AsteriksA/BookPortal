@@ -6,28 +6,24 @@ import com.gold.model.UserEntity;
 import com.gold.view.View;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonView(View.Public.class)
 public class User {
 
-    @JsonView(View.Public.class)
-    private String name;
-
     @JsonView(View.Internal.class)
-    private String password;
+    private Long id;
+    private String username;
 
-    @JsonView(View.Public.class)
     private String email;
 
     @JsonView(View.Internal.class)
@@ -35,7 +31,7 @@ public class User {
 
     public static User from(UserEntity entity) {
         return User.builder()
-                .name(entity.getName())
+                .username(entity.getUsername())
                 .email(entity.getEmail())
                 .build();
     }

@@ -1,11 +1,9 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Publisher;
-import com.gold.form.UpdateUserForm;
 import com.gold.model.PublisherEntity;
 import com.gold.repository.PublisherRepository;
 import com.gold.service.interfaces.PublisherService;
-import com.gold.util.EntityUtils;
 import com.gold.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.gold.util.EntityUtils.notNull;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,27 +24,24 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     public List<Publisher> findAll() {
-        List<PublisherEntity> publisherEntities = publisherRepository.findAll();
-        return mapper.convertToDto(publisherEntities, Publisher.class);
+        return mapper.convertToDto(publisherRepository.findAll(), Publisher.class);
     }
 
     @Override
     public Publisher findByName(String name) {
-        PublisherEntity publisherEntity = publisherRepository.findByName(name);
-        return mapper.convertToDto(publisherEntity, Publisher.class);
+        return mapper.convertToDto(publisherRepository.findByName(name), Publisher.class);
     }
 
     @Override
     public Publisher findOne(Long id) {
-        PublisherEntity publisherEntity = getPublisher(id);
-        return mapper.convertToDto(publisherEntity, Publisher.class);
+        return mapper.convertToDto(getPublisher(id), Publisher.class);
     }
 
     @Override
     @Transactional
-    public void add(Publisher publisher) {
+    public Publisher add(Publisher publisher) {
         PublisherEntity entity = mapper.convertToEntity(publisher, PublisherEntity.class);
-        publisherRepository.save(entity);
+        return mapper.convertToDto(publisherRepository.save(entity), Publisher.class);
     }
 
     @Override
@@ -53,11 +50,10 @@ public class PublisherServiceImpl implements PublisherService {
         publisherRepository.deleteById(id);
     }
 
-//    @Override
     @Transactional
-    public void update(Long id, UpdateUserForm publisher) {
+    public void update(Long id, Publisher publisher) {
         PublisherEntity entity = getPublisher(id);
-        EntityUtils.isNull(entity);
+        notNull(entity);
         mapper.convertToEntity(publisher, entity);
         publisherRepository.save(entity);
     }

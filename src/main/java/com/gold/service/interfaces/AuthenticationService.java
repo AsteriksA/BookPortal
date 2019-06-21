@@ -1,20 +1,18 @@
 package com.gold.service.interfaces;
 
-import com.gold.dto.Token;
-import com.gold.form.LoginForm;
 import com.gold.form.RestorePasswordForm;
 import com.gold.form.SignUpForm;
+import com.gold.security2.service.AuthenticationException;
+import com.gold.security2.service.JwtAuthenticationRequest;
+import org.springframework.http.ResponseEntity;
 
 public interface AuthenticationService {
 
-    Token login(LoginForm loginForm);
-
     void signUp(SignUpForm signUpForm);
-
     void activateUser(String code);
-
-    void logout(String token);
-
     void restorePassword(RestorePasswordForm passwordForm);
 
+    ResponseEntity<?> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest) throws AuthenticationException;
+
+    ResponseEntity<?> refreshToken(String tokenPayload);
 }

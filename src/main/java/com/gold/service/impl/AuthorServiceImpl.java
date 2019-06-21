@@ -1,11 +1,9 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Author;
-import com.gold.form.UpdateUserForm;
 import com.gold.model.AuthorEntity;
 import com.gold.repository.AuthorRepository;
 import com.gold.service.interfaces.AuthorService;
-import com.gold.util.EntityUtils;
 import com.gold.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.gold.util.EntityUtils.notNull;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,8 +29,9 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void add(Author author) {
-        authorRepository.save(mapper.convertToEntity(author, AuthorEntity.class));
+    public Author add(Author author) {
+        AuthorEntity entity = authorRepository.save(mapper.convertToEntity(author, AuthorEntity.class));
+        return mapper.convertToDto(entity, Author.class);
     }
 
     @Override
@@ -41,14 +42,14 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void update(Long id, Author author) {
+    public Author update(Long id, Author author) {
         AuthorEntity entity = getAuthor(id);
-        EntityUtils.isNull(entity);
+        notNull(entity);
         mapper.convertToEntity(author, entity);
-        authorRepository.save(entity);
+        return mapper.convertToDto(authorRepository.save(entity), Author.class);
     }
 
-    //    TODO: change the method
+    //TODO: change the method. Maybe remove this method, cause a method findBySearch() is existed in a bookService.
     @Override
     public List<Author> findByFirstNameAndSecondName(String firstName, String secondName) {
         List<AuthorEntity> authorEntities = authorRepository.findByFirstNameOrLastName(firstName, secondName);

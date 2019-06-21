@@ -2,5 +2,5 @@ package com.gold.model;
 
 public enum State {
 
-    ACTIVATED, BANNED, DELETED;
+    ACTIVATED, BANNED, DELETED, REGISTERED;
 }

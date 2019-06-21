@@ -2,15 +2,11 @@ package com.gold.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.gold.dto.User;
-import com.gold.form.ChangePasswordForm;
 import com.gold.form.UpdateUserForm;
-import com.gold.repository.UserRepository;
 import com.gold.service.interfaces.UserService;
 import com.gold.view.View;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,20 +32,18 @@ public class AdminController {
         return userService.findAll();
     }
 
-    @DeleteMapping("/users/{id}/delete")
-    public void deleteUserById(@PathVariable Long id) {
-        userService.remove(id);
+    @DeleteMapping("/users/{userId}")
+    public void deleteUserById(@PathVariable Long userId) {
+        userService.remove(userId);
     }
 
-    @PostMapping("/users/{id}")
-    public void bannedUser(@PathVariable Long id, @RequestParam(name = "isBanned") Boolean isBanned) {
-        userService.bannedById(id);
+    @PutMapping("/users/{userId}/ban")
+    public void bannedUser(@PathVariable Long userId) {
+        userService.bannedById(userId);
     }
 
-    @PutMapping("/users/{id}/change")
-    public ResponseEntity<Object> change(@PathVariable Long id, @RequestBody UpdateUserForm userForm) {
-        userService.update(id, userForm);
-        return ResponseEntity.ok().build();
+    @PutMapping("/users/{userId}")
+    public void change(@PathVariable Long userId, @RequestBody UpdateUserForm userForm) {
+        userService.update(userId, userForm);
     }
-
 }

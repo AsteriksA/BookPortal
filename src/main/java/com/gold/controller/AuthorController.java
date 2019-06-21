@@ -14,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@RequestMapping("/authors")
+@RequestMapping("/api/authors")
 public class AuthorController {
     private final AuthorService authorService;
 
@@ -23,12 +23,12 @@ public class AuthorController {
         return authorService.findAll();
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public Author getAuthor(@PathVariable Long id) {
         return authorService.findOne(id);
     }
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public void updateAuthor(@PathVariable Long id, Author author) {
         authorService.update(id, author);
     }

@@ -7,7 +7,8 @@ import com.gold.form.UpdateUserForm;
 import com.gold.service.interfaces.UserService;
 import com.gold.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private UserService userService;
@@ -29,8 +30,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @JsonView(View.Internal.class)
     @GetMapping
+    @JsonView(View.Internal.class)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<User> getUsers() {
         return userService.findAll();
     }
@@ -47,28 +49,18 @@ public class UserController {
         return userService.findByName(name);
     }
 
-//    @PostMapping("/add")
-//    public ResponseEntity<Object> add(@RequestBody SignUpForm userForm) {
-//        userService.signUp(userForm);
-//        return ResponseEntity.ok().build();
-//    }
-
-    @PutMapping("/{id}/update")
-    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody UpdateUserForm userForm) {
+    @PutMapping("/{id}")
+    public void update(@PathVariable Long id, @RequestBody UpdateUserForm userForm) {
         userService.update(id, userForm);
-        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}/changePassword")
-    public ResponseEntity<Object> changePassword(@PathVariable Long id, @RequestBody ChangePasswordForm passwordForm) {
+    public void changePassword(@PathVariable Long id, @RequestBody ChangePasswordForm passwordForm) {
         userService.changePassword(id, passwordForm);
-        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}/delete")
-    public ResponseEntity<Object> delete(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
         userService.remove(id);
-        return ResponseEntity.ok().build();
     }
-
 }

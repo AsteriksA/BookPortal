@@ -1,0 +1,11 @@
+{
+  "name": "The Sea Wolf",
+  "authors":[{"firstName":"Jack", "lastName":"London"}],
+  "genre":{"name":"Adventure"},
+  "publisher":{"name":"Daily Sun"},
+  "publisherYear":"1904",
+  "pageCount":"22",
+  "isbn":"JL01",
+  "description":"The story about a man had become a captain"
+}
+

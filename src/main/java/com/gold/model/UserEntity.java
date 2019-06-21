@@ -3,12 +3,9 @@ package com.gold.model;
 import com.gold.dto.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-//import org.hibernate.validator.constraints.Email;
-//import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -16,13 +13,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
-//@Data
 @Getter
 @Setter
+@Entity
 @Builder
 @Table(name = "users")
 @NoArgsConstructor
@@ -33,13 +30,12 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(unique = true, nullable = false)
-    @NotBlank(message = "Name is required")
-    private String name;
+    private String username;
 
-//    must be hashpassword
     @NotNull
-    @Size(min = 5)
+    @Size(min = 10)
     private String password;
 
     @Email
@@ -57,12 +53,13 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private State state;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    Set<TokenEntity> tokens;
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    private Date lastPasswordResetDate;
 
     public static UserEntity from(User user) {
         return UserEntity.builder()
-                .name(user.getName())
+                .username(user.getUsername())
                 .email(user.getEmail())
                 .activationCode(UUID.randomUUID().toString())
                 .roles(Collections.singleton(RoleEntity.ROLE_USER))

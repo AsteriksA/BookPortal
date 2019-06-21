@@ -2,13 +2,11 @@ package com.gold.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.gold.view.View;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
+@JsonView(View.Internal.class)
 public class Role {
 
-    @JsonView(View.Internal.class)
     private String role;
 }

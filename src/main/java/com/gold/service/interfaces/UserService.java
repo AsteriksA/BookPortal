@@ -12,10 +12,10 @@ public interface UserService extends BaseService<User, Long> {
 
 //    void signUp(SignUpForm userForm);
 
-    void update(Long id, UpdateUserForm userForm);
+    User update(Long id, UpdateUserForm userForm);
 
-    void bannedById(Long id);
+    User bannedById(Long id);
 
-    void changePassword(Long id, ChangePasswordForm passwordForm);
+    User changePassword(Long id, ChangePasswordForm passwordForm);
 
 }

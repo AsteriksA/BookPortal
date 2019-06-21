@@ -1,7 +1,11 @@
 package com.gold.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.CascadeType;
@@ -24,10 +28,12 @@ import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.Set;
 
-@Entity
 @Getter
 @Setter
+@Entity
 @Table(name = "books")
+@NoArgsConstructor
+@AllArgsConstructor
 @NamedEntityGraphs({
         @NamedEntityGraph(name = "withoutBookContent", attributeNodes = {
                 @NamedAttributeNode("genre"),
@@ -47,14 +53,14 @@ public class BookEntity {
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "books")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "books", cascade = CascadeType.PERSIST)
     private Set<AuthorEntity> authors;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "genre_id")
     private GenreEntity genre;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "publisher_id")
     private PublisherEntity publisher;
 
@@ -76,8 +82,8 @@ public class BookEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private Double rating;
+    private double rating;
 
-    private Integer voteCount;
+    private int voteCount;
 }
 

@@ -10,8 +10,6 @@ import java.util.Optional;
 public interface PublisherRepository extends JpaRepository<PublisherEntity, Long> {
 
     PublisherEntity findByName(String name);
-
     void deleteById(Long id);
-
     Optional<PublisherEntity> findById(Long id);
 }

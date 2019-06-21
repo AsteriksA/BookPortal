@@ -14,22 +14,15 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<BookEntity, Long> {
 
     List<BookEntity> findByNameLike(String name);
-
-//    @Query("SELECT DISTINCT b FROM BookEntity b JOIN b.authors a " +
-//            "WHERE b.name=:name OR a.firstName=:name OR a.lastName=:name")
-//    List<BookEntity> findByNameFromSearch(@Param("name") String name);
-
-//    @Query("SELECT b FROM BookEntity b JOIN b.authors a " +
-//            "WHERE b.name MEMBER OF paremetres OR a.firstName " +
-//            "member of  parametres or a.lastName member of parametres" )
-    @Query("SELECT b FROM BookEntity b LEFT JOIN b.authors aut " +
-            "WHERE b.name IN :parameters OR aut.firstName IN :parameters " +
-            "OR aut.lastName IN :parameters")
-    List<BookEntity> findBySearch(@Param("parameters") String... parameters);
-
     List<BookEntity> findByGenre_Name(String genreName);
-
     List<BookEntity> findByPublisher_Name(String publisherName);
+    void deleteById(Long id);
+    Optional<BookEntity> findById(Long id);
+
+    @Query("SELECT book FROM BookEntity book LEFT JOIN book.authors AS author " +
+            "WHERE book.name IN :parameters OR author.firstName IN :parameters " +
+            "OR author.lastName IN :parameters")
+    List<BookEntity> findBySearch(@Param("parameters") String... parameters);
 
     @EntityGraph(value = "allJoins", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT b from BookEntity b WHERE b.id = :id")
@@ -39,8 +32,5 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
     @Query("SELECT b from BookEntity b WHERE b.id = :id")
     BookEntity findBookByIdWithoutBookContent(@Param("id") Long id);
 
-    void deleteById(Long id);
-
-    Optional<BookEntity> findById(Long id);
 
 }

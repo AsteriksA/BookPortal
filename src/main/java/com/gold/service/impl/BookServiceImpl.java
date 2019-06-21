@@ -1,8 +1,9 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Book;
-import com.gold.form.UpdateUserForm;
+import com.gold.form.BookForm;
 import com.gold.model.AuthorEntity;
+import com.gold.model.BookContentEntity;
 import com.gold.model.BookEntity;
 import com.gold.model.GenreEntity;
 import com.gold.model.PublisherEntity;
@@ -16,16 +17,18 @@ import com.gold.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Service
 @Slf4j
+@Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BookServiceImpl implements BookService {
@@ -38,29 +41,30 @@ public class BookServiceImpl implements BookService {
 
       @Override
     public List<Book> findAll() {
-        List<BookEntity> bookEntities = bookRepository.findAll();
-        log.info("info get all books");
-        log.debug("debug get all books");
-        log.warn("warn get all books");
-        return mapper.convertToDto(bookEntities, Book.class);
+        return mapper.convertToDto(bookRepository.findAll(), Book.class);
     }
 
+//    TODO: Delete this method? because there is already a universal method for finding the title of the book and the author
     @Override
     public List<Book> findByName(String name) {
-        List<BookEntity> bookEntities = bookRepository.findByNameLike(name);
-        return mapper.convertToDto(bookEntities, Book.class);
+        return mapper.convertToDto(bookRepository.findByNameLike(name), Book.class);
+    }
+
+//    TODO: Delete this method? because there is already a universal method for finding the title of the book and the author
+    @Override
+    public List<Book> findByAuthor(String authorName) {
+        return null;
     }
 
     @Override
     public List<Book> findByGenre(String genreName) {
-        List<BookEntity> bookEntities = bookRepository.findByGenre_Name(genreName);
-        return mapper.convertToDto(bookEntities, Book.class);
+        return mapper.convertToDto(bookRepository.findByGenre_Name(genreName), Book.class);
     }
 
+//    TODO: Delete this method? I’m unlikely to implement publisher search functionality
     @Override
     public List<Book> findByPublisher(String publisherName) {
-        List<BookEntity> bookEntities = bookRepository.findByPublisher_Name(publisherName);
-        return mapper.convertToDto(bookEntities, Book.class);
+        return mapper.convertToDto(bookRepository.findByPublisher_Name(publisherName), Book.class);
     }
 
     @Override
@@ -70,18 +74,44 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> findByAuthor(String authorName) {
-        return null;
+    @Transactional
+    public void add(String book, MultipartFile imageFile, MultipartFile contentFile) throws IOException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @Transactional
-    public void add(Book book) {
-        BookEntity entity = mapper.convertToEntity(book, BookEntity.class);
-        setAuthors(entity);
-        setGenre(entity);
-        setPublisher(entity);
-        bookRepository.save(entity);
+    public Book add(BookForm book, MultipartFile imageFile, MultipartFile contentFile) throws IOException {
+        BookEntity entityCandidate = mapper.convertToEntity(book, BookEntity.class);
+        byte[] image = imageFile.getBytes();
+        byte[] content = contentFile.getBytes();
+        build(image, content, entityCandidate);
+        return mapper.convertToDto(bookRepository.save(entityCandidate), Book.class);
+    }
+
+    private void build(byte[] image, byte[] content, BookEntity entityCandidate) {
+        entityCandidate.setImage(image);
+        entityCandidate.setContent(setBookContent(content, entityCandidate));
+        setAuthors(entityCandidate);
+        setGenre(entityCandidate);
+        setPublisher(entityCandidate);
+    }
+
+    private BookContentEntity setBookContent(byte[] content, BookEntity entityCandidate) {
+        BookContentEntity bookContent = new BookContentEntity();
+        bookContent.setContent(content);
+        bookContent.setBookEntity(entityCandidate);
+        return bookContent;
+    }
+
+    @Override
+    @Transactional
+    public Book add(Book book) {
+        BookEntity entityCandidate = mapper.convertToEntity(book, BookEntity.class);
+        setAuthors(entityCandidate);
+        setGenre(entityCandidate);
+        setPublisher(entityCandidate);
+        return mapper.convertToDto(bookRepository.save(entityCandidate), Book.class);
     }
 
     private void setPublisher(BookEntity entity) {
@@ -129,11 +159,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void update(Long id, Book book) {
+    public Book update(Long id, Book book) {
         BookEntity entity = getEntity(id);
-        EntityUtils.isNull(entity);
+        EntityUtils.notNull(entity);
         mapper.convertToEntity(book, entity);
-        bookRepository.save(entity);
+        return mapper.convertToDto(bookRepository.save(entity), Book.class);
     }
 
     @Override
@@ -152,9 +182,8 @@ public class BookServiceImpl implements BookService {
     }
 
     private BookEntity getEntity(Long id) {
-//        return bookRepository.findById(id).orElse(null);
         return bookRepository.findById(id).
-                orElseThrow(()->new UsernameNotFoundException("User doesn't exist"));
+                orElseThrow(()->new EntityNotFoundException("Book doesn't exist"));
     }
 
     @Override

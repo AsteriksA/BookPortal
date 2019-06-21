@@ -1,27 +1,40 @@
 package com.gold.service.impl;
 
-import com.gold.dto.Token;
-import com.gold.form.LoginForm;
 import com.gold.form.RestorePasswordForm;
 import com.gold.form.SignUpForm;
 import com.gold.model.RoleEntity;
 import com.gold.model.State;
-import com.gold.model.TokenEntity;
 import com.gold.model.UserEntity;
-import com.gold.repository.TokenRepository;
 import com.gold.repository.UserRepository;
+import com.gold.security2.jwt.JwtTokenUtil;
+import com.gold.security2.jwt.JwtUser;
+import com.gold.security2.service.AuthenticationException;
+import com.gold.security2.service.JwtAuthenticationRequest;
+import com.gold.security2.service.JwtAuthenticationResponse;
 import com.gold.service.interfaces.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,56 +52,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final static Integer DEFAULT_LENGTH_PASSWORD =10;
 
     private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
-
-    @Override
-    public Token login(LoginForm loginForm) {
-        Optional<UserEntity> userCandidate = userRepository.findByName(loginForm.getName());
-
-        if (userCandidate.isPresent()) {
-            UserEntity entity = userCandidate.get();
-
-            if (entity.getState() != null && passwordEncoder.matches(loginForm.getPassword(), entity.getPassword())) {
-                TokenEntity token = TokenEntity.builder()
-                        .user(entity)
-                        .value(UUID.randomUUID().toString())
-                        .build();
-
-                tokenRepository.save(token);
-                return Token.from(token);
-            }
-        }
-        String exceptionMessage = String
-                .format("User not found with login: %s, password: %s", loginForm.getName(), loginForm.getPassword());
-        throw new EntityNotFoundException(exceptionMessage);
-    }
-
-    @Override
-    public void logout(String token) {
-        Optional<TokenEntity> tokenCandidate = tokenRepository.findOneByValue(token);
-
-        if (!tokenCandidate.isPresent()) {
-            throw new EntityNotFoundException("Token isn't exist!");
-        }
-        tokenRepository.delete(tokenCandidate.get());
-    }
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public void signUp(SignUpForm signUpForm) {
-        Optional<UserEntity> userCandidate = userRepository.findByName(signUpForm.getName());
-
+        Optional<UserEntity> userCandidate = userRepository.findByEmail(signUpForm.getEmail());
         if (userCandidate.isPresent()) {
             throw new EntityExistsException("An account is already existed");
         }
+//        UserEntity userEntity = userRepository.findByEmail(signUpForm.getEmail())
+//                .orElseThrow(()->new EntityExistsException("An account is already existed"));
         String hashPassword = passwordEncoder.encode(signUpForm.getPassword());
 
         UserEntity entity = build(signUpForm, hashPassword);
         userRepository.save(entity);
 
-        String message = String.format(MESSAGE, entity.getName(), entity.getActivationCode());
+        String message = String.format(MESSAGE, entity.getUsername(), entity.getActivationCode());
         mailService.send(entity.getEmail(), SUBJECT_ACTIVATE, message);
+        System.out.println("success");
     }
 
     @Override
@@ -101,32 +86,85 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String hashPassword = passwordEncoder.encode(password);
         entity.setPassword(hashPassword);
 
-        String message = String.format(RESTORE_MESSAGE, entity.getName(), password);
+        String message = String.format(RESTORE_MESSAGE, entity.getUsername(), password);
         mailService.send(passwordForm.getEmail(), SUBJECT_RESTORE_PASSWORD, message);
     }
 
     private UserEntity build(SignUpForm signUpForm, String hashPassword) {
         return UserEntity.builder()
-                .name(signUpForm.getName())
+                .username(signUpForm.getUsername())
                 .password(hashPassword)
                 .email(signUpForm.getEmail())
                 .activationCode(UUID.randomUUID().toString())
+                .state(State.REGISTERED)
+                .lastPasswordResetDate(new Date(System.currentTimeMillis()))
                 .roles(Collections.singleton(RoleEntity.ROLE_USER))
                 .build();
     }
 
     @Override
     public void activateUser(String code) {
-        Optional<UserEntity> userCandidate = userRepository.findByActivationCode(code);
+        UserEntity userCandidate =userRepository.findByActivationCode(code)
+                .orElseThrow(()-> new UsernameNotFoundException("User with this activation code doesn't exist!"));
 
-        if (!userCandidate.isPresent()) {
-            throw new UsernameNotFoundException("User with this activation code doesn't exist!");
+        userCandidate.setState(State.ACTIVATED);
+        userCandidate.setActivationCode(null);
+        userRepository.save(userCandidate);
+    }
+
+//    TODO: invoke two times loadByUsername() in this method
+    @Override
+    public ResponseEntity<?> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
+
+        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+
+        // Reload password post-security so we can generate the token
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+//        UserDetails userDetails2 = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final String accessToken = jwtTokenUtil.generateAccesToken(userDetails);
+        final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put("accessToken", accessToken);
+        tokenMap.put("refreshToken", refreshToken);
+
+        // Return the token
+        return ResponseEntity.ok(new JwtAuthenticationResponse(tokenMap));
+    }
+
+    /**
+     * Authenticates the user. If something is wrong, an {@link AuthenticationException} will be thrown
+     */
+    private void authenticate(String username, String password) {
+        Objects.requireNonNull(username);
+        Objects.requireNonNull(password);
+
+        try {
+            Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
+            authenticationManager.authenticate(authentication);
+//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (DisabledException e) {
+            throw new AuthenticationException("User is disabled!", e);
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationException("Bad credentials!", e);
         }
+    }
 
-        UserEntity entity = userCandidate.get();
-        entity.setState(State.ACTIVATED);
-        entity.setActivationCode(null);
+    @Override
+    public ResponseEntity<?> refreshToken(String tokenPayload) {
+        String token = tokenPayload.substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
+        JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);
 
-        userRepository.save(entity);
+        Map<String, String> tokenMap = new HashMap<>();
+        if (jwtTokenUtil.canTokenBeRefreshed(token, user.getEntity().getLastPasswordResetDate() )) {
+            String accessToken = jwtTokenUtil.generateAccesToken(user);
+            String refreshToken = jwtTokenUtil.generateRefreshToken(user);
+            tokenMap.put("accessToken", accessToken);
+            tokenMap.put("refreshToken", refreshToken);
+            return ResponseEntity.ok(new JwtAuthenticationResponse(tokenMap));
+        } else {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 }

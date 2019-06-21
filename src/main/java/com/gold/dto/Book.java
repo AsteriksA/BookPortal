@@ -5,6 +5,7 @@ import com.gold.model.BookEntity;
 import com.gold.view.View;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,39 +15,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@JsonView({View.Public.class})
 public class Book {
 
+    @JsonView(View.Internal.class)
     private Long id;
-
-    @JsonView(View.Public.class)
     private String name;
-
-    @JsonView(View.Public.class)
     private Set<Author> authors;
-
-    @JsonView(View.Public.class)
     private Genre genre;
-
-    @JsonView(View.Public.class)
     private Publisher publisher;
-
     private Date publisherYear;
-
     private byte[] image;
-
     private int pageCount;
-
     private String isbn;
-
     private String description;
-
     private Double rating;
-
     private Integer voteCount;
 
     public static Book from(BookEntity entity) {

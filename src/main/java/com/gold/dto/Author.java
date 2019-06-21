@@ -5,26 +5,22 @@ import com.gold.model.AuthorEntity;
 import com.gold.view.View;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@JsonView(View.Public.class)
 public class Author {
 
+    @JsonView(View.Internal.class)
     private Long id;
-
-    @JsonView(View.Public.class)
     private String firstName;
-
-    @JsonView(View.Public.class)
     private String lastName;
 
     public static Author from(AuthorEntity entity) {

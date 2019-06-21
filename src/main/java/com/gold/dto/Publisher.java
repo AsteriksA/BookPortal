@@ -5,18 +5,18 @@ import com.gold.model.PublisherEntity;
 import com.gold.view.View;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@JsonView(View.Public.class)
 public class Publisher {
 
-    @JsonView(View.Public.class)
+    @JsonView(View.Internal.class)
+    private Long id;
     private String name;
 
     public static Publisher from(PublisherEntity entity) {

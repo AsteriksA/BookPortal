@@ -12,17 +12,15 @@ import com.gold.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
-@Service
 @Slf4j
+@Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService {
@@ -33,62 +31,56 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAll() {
-        List<UserEntity> userEntities = userRepository.findAll();
-        log.info("Get all users");
-        return User.from(userEntities);
-//        return mapper.convertToDto(userEntities, User.class);
+        return mapper.convertToDto(userRepository.findAll(), User.class);
     }
 
     @Override
     public User findByEmail(String email) {
-        Optional<UserEntity> userCandidate = userRepository.findByEmail(email);
-        return getUser(userCandidate);
-//        return mapper.convertToDto(userEntity, User.class);
+        UserEntity userCandidate = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User with this email:" + email + " is exist"));
+        return mapper.convertToDto(userCandidate, User.class);
     }
 
     @Override
     public User findByName(String name) {
-        Optional<UserEntity> userCandidate = userRepository.findByName(name);
-
-        return getUser(userCandidate);
+        UserEntity userCandidate = userRepository.findByUsername(name)
+                .orElseThrow(() -> new EntityNotFoundException("User with this email:" + name + " is exist"));
+        return mapper.convertToDto(userCandidate, User.class);
     }
 
     @Override
     public User findOne(Long id) {
-        UserEntity userEntity = getById(id);
-        return mapper.convertToDto(userEntity, User.class);
+        return mapper.convertToDto(getById(id), User.class);
     }
 
-//    TODO: Is this method necessary?
     @Override
-    @Transactional
-    public void add(User user) {
-        UserEntity entity = mapper.convertToEntity(user, UserEntity.class);
-        userRepository.save(entity);
+    public User add(User user) {
+        throw new UnsupportedOperationException("For adding user use the sign_up procedure");
     }
 
     @Override
     @Transactional
     public void remove(Long id) {
-        userRepository.delete(getById(id));
+        userRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public void update(Long id, UpdateUserForm user) {
+    public User update(Long id, UpdateUserForm userForm) {
         UserEntity entity = getById(id);
-        mapper.convertToEntity(user, entity);
+        mapper.convertToEntity(userForm, entity);
         userRepository.save(entity);
+        return mapper.convertToDto(entity, User.class);
     }
 
     @Override
     @Transactional
-    public void changePassword(Long id, ChangePasswordForm passwordForm) {
-        UserEntity entity = getById(id);
-        checkPassword(entity.getPassword(), passwordForm.getPassword());
-        String hashPassword = passwordEncoder.encode(passwordForm.getNewPassword());
-        entity.setPassword(hashPassword);
-        userRepository.save(entity);
+    public User changePassword(Long id, ChangePasswordForm passwordForm) {
+        UserEntity user = getById(id);
+        checkPassword(passwordForm.getPassword(), user.getPassword());
+        user.setPassword(passwordEncoder.encode(passwordForm.getNewPassword()));
+        userRepository.save(user);
+        return mapper.convertToDto(user, User.class);
     }
 
     private void checkPassword(String passwordForm, String entityPassword) {
@@ -99,23 +91,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void bannedById(Long id) {
+    public User bannedById(Long id) {
         UserEntity entity = getById(id);
         entity.setState(State.BANNED);
-        userRepository.save(entity);
-    }
+        return mapper.convertToDto(userRepository.save(entity), User.class);
 
-    private User getUser(Optional<UserEntity> userCandidate) {
-        if (userCandidate.isPresent()) {
-            UserEntity entity = userCandidate.get();
-            return User.from(entity);
-        }
-        throw new UsernameNotFoundException("User not found");
     }
 
     private UserEntity getById(Long id) {
         UserEntity entity = userRepository.findById(id).orElse(null);
-        EntityUtils.isNull(entity);
+        EntityUtils.notNull(entity);
         return entity;
     }
 }

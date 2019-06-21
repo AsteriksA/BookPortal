@@ -1,11 +1,9 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Genre;
-import com.gold.form.UpdateUserForm;
 import com.gold.model.GenreEntity;
 import com.gold.repository.GenreRepository;
 import com.gold.service.interfaces.GenreService;
-import com.gold.util.EntityUtils;
 import com.gold.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.gold.util.EntityUtils.notNull;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,28 +24,24 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public List<Genre> findAll() {
-        List<GenreEntity> genreEntities = genreRepository.findAll();
-        return mapper.convertToDto(genreEntities, Genre.class);
+        return mapper.convertToDto(genreRepository.findAll(), Genre.class);
     }
 
     @Override
     public Genre findByName(String name) {
-        GenreEntity genreEntity = genreRepository.findByName(name);
-        return mapper.convertToDto(genreEntity, Genre.class);
+        return mapper.convertToDto(genreRepository.findByName(name), Genre.class);
     }
-
 
     @Override
     public Genre findOne(Long id) {
-        GenreEntity genreEntity = getGenre(id);
-        return mapper.convertToDto(genreEntity, Genre.class);
+        return mapper.convertToDto(getGenre(id), Genre.class);
     }
 
     @Override
     @Transactional
-    public void add(Genre genre) {
+    public Genre add(Genre genre) {
         GenreEntity entity = mapper.convertToEntity(genre, GenreEntity.class);
-        genreRepository.save(entity);
+        return mapper.convertToDto(genreRepository.save(entity),Genre.class);
     }
 
     @Override
@@ -56,11 +52,11 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public void update(Long id, Genre genre) {
+    public Genre update(Long id, Genre genre) {
         GenreEntity entity = getGenre(id);
-        EntityUtils.isNull(entity);
+        notNull(entity);
         mapper.convertToEntity(genre, entity);
-        genreRepository.save(entity);
+        return mapper.convertToDto(genreRepository.save(entity), Genre.class);
     }
 
     private GenreEntity getGenre(Long id) {
