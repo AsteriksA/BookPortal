@@ -19,9 +19,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -29,6 +26,7 @@ import java.util.List;
 public class WebSecurityConfig2 extends WebSecurityConfigurerAdapter {
 
     public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
+    public static final String API_URL = "/api";
     private static final String API_ROOT_URL = "/api/**";
     private static final String ADMIN_URL = "/api/admin/*";
     private static final String OWNER_URL = "/api/owner/*";
@@ -72,7 +70,6 @@ public class WebSecurityConfig2 extends WebSecurityConfigurerAdapter {
                 .antMatchers(ACTIVATE_URL).permitAll()
                 .antMatchers(REFRESH_TOKEN_URL).permitAll()
                 .antMatchers(ADMIN_URL).hasAuthority("ADMIN")
-//                .antMatchers(OWNER_URL).access("hasAuthority('ROLE_USER')")
                 .antMatchers(OWNER_URL).hasAuthority("OWNER")
                 .antMatchers(HEAD_URL).hasAuthority("HEAD")
                 .antMatchers(API_ROOT_URL).authenticated()
@@ -81,7 +78,7 @@ public class WebSecurityConfig2 extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web){
         web
                 .ignoring()
                 .antMatchers(

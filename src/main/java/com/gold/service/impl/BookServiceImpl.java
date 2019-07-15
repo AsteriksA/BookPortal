@@ -1,7 +1,6 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Book;
-import com.gold.form.BookForm;
 import com.gold.model.AuthorEntity;
 import com.gold.model.BookContentEntity;
 import com.gold.model.BookEntity;
@@ -75,13 +74,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void add(String book, MultipartFile imageFile, MultipartFile contentFile) throws IOException {
+    public void add(String book, MultipartFile imageFile, MultipartFile contentFile){
         throw new UnsupportedOperationException();
     }
 
     @Override
     @Transactional
-    public Book add(BookForm book, MultipartFile imageFile, MultipartFile contentFile) throws IOException {
+    public Book add(Book book, MultipartFile imageFile, MultipartFile contentFile) throws IOException {
         BookEntity entityCandidate = mapper.convertToEntity(book, BookEntity.class);
         byte[] image = imageFile.getBytes();
         byte[] content = contentFile.getBytes();
@@ -153,7 +152,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void remove(Long id) {
+    public void delete(Long id) {
         bookRepository.deleteById(id);
     }
 
@@ -173,12 +172,14 @@ public class BookServiceImpl implements BookService {
         Integer voteCount = entity.getVoteCount();
         Double ratingCandidate = calculateRating(entity, voteCount, rating);
         entity.setRating(ratingCandidate);
-        entity.setVoteCount(voteCount);
+        entity.setVoteCount(++voteCount);
         bookRepository.save(entity);
     }
 
     private Double calculateRating(BookEntity entity, Integer voteCount, Integer rating) {
-          return (entity.getRating()*voteCount+rating)/++voteCount;
+          Double totalRating = entity.getRating()*voteCount+rating;
+          voteCount++;
+          return totalRating/voteCount;
     }
 
     private BookEntity getEntity(Long id) {
@@ -187,9 +188,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<Book> findBySearch(String param) {
+    public List<Book> findBooksByParam(String param) {
+        if (param == null) {
+            return this.findAll();
+        }
         String[] params = param.split(" ");
-        List<BookEntity> books = bookRepository.findBySearch(params);
+        List<BookEntity> books = bookRepository.findByParam(params);
         return mapper.convertToDto(books, Book.class);
     }
 }

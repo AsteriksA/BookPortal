@@ -42,11 +42,11 @@ public class BookContentServiceImpl implements BookContentService {
     }
 
 
-//    TODO: How correct implement remove method? Like this. Get entity by id in the DB and only then invoke delete method.
-//    Or implement like another methods in other test classes - at once invoke delete by id?
+//    TODO: How correct implement delete method? Like this. Get entity by id in the DB then invoke delete method.
+//    Or implement like another methods in other test classes - right away invoke delete by id?
     @Override
     @Transactional
-    public void remove(Long id) {
+    public void delete(Long id) {
         bookContentRepository.delete(getEntity(id));
     }
 

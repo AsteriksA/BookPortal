@@ -1,6 +1,6 @@
 package com.gold.service.impl;
 
-import com.gold.form.RestorePasswordForm;
+import com.gold.dto.User;
 import com.gold.form.SignUpForm;
 import com.gold.model.RoleEntity;
 import com.gold.model.State;
@@ -64,8 +64,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userCandidate.isPresent()) {
             throw new EntityExistsException("An account is already existed");
         }
-//        UserEntity userEntity = userRepository.findByEmail(signUpForm.getEmail())
-//                .orElseThrow(()->new EntityExistsException("An account is already existed"));
         String hashPassword = passwordEncoder.encode(signUpForm.getPassword());
 
         UserEntity entity = build(signUpForm, hashPassword);
@@ -78,7 +76,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional
-    public void restorePassword(RestorePasswordForm passwordForm) {
+    public void restorePassword(User passwordForm) {
         UserEntity entity = userRepository.findByEmail(passwordForm.getEmail())
                 .orElseThrow(()-> new UsernameNotFoundException("User with this email: " + passwordForm.getEmail() +" doesn't exist"));
 
@@ -120,8 +118,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         // Reload password post-security so we can generate the token
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-//        UserDetails userDetails2 = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        final String accessToken = jwtTokenUtil.generateAccesToken(userDetails);
+        final String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
         final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("accessToken", accessToken);
@@ -141,7 +138,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
             Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
             authenticationManager.authenticate(authentication);
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (DisabledException e) {
             throw new AuthenticationException("User is disabled!", e);
@@ -158,7 +154,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Map<String, String> tokenMap = new HashMap<>();
         if (jwtTokenUtil.canTokenBeRefreshed(token, user.getEntity().getLastPasswordResetDate() )) {
-            String accessToken = jwtTokenUtil.generateAccesToken(user);
+            String accessToken = jwtTokenUtil.generateAccessToken(user);
             String refreshToken = jwtTokenUtil.generateRefreshToken(user);
             tokenMap.put("accessToken", accessToken);
             tokenMap.put("refreshToken", refreshToken);

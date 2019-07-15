@@ -2,7 +2,6 @@ package com.gold.service.impl;
 
 import com.gold.dto.User;
 import com.gold.form.ChangePasswordForm;
-import com.gold.form.UpdateUserForm;
 import com.gold.model.State;
 import com.gold.model.UserEntity;
 import com.gold.repository.UserRepository;
@@ -60,13 +59,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void remove(Long id) {
+    public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    public User update(Long id, UpdateUserForm userForm) {
+    public User update(Long id, User userForm) {
         UserEntity entity = getById(id);
         mapper.convertToEntity(userForm, entity);
         userRepository.save(entity);
@@ -91,11 +90,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User bannedById(Long id) {
+    public User bannedById(Long id, Boolean isBan) {
+        if (!isBan){
+            return mapper.convertToDto(this.getById(id), User.class);
+        }
         UserEntity entity = getById(id);
         entity.setState(State.BANNED);
         return mapper.convertToDto(userRepository.save(entity), User.class);
-
     }
 
     private UserEntity getById(Long id) {

@@ -46,7 +46,7 @@ public class PublisherServiceImpl implements PublisherService {
 
     @Override
     @Transactional
-    public void remove(Long id) {
+    public void delete(Long id) {
         publisherRepository.deleteById(id);
     }
 

@@ -33,7 +33,7 @@ public class PublisherServiceImplTest {
     private Long publisherId = 1L;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         publisherService = new PublisherServiceImpl(publisherRepository, entityMapper);
         entity = new PublisherEntity();
         publisher = new Publisher();
@@ -66,7 +66,7 @@ public class PublisherServiceImplTest {
 
     @Test
     public void successfulRemoveGenre() {
-        publisherService.remove(publisherId);
+        publisherService.delete(publisherId);
         verify(publisherRepository, times(1)).deleteById(publisherId);
     }
 

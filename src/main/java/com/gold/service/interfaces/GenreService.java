@@ -6,6 +6,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface GenreService extends BaseService<Genre, Long> {
 
     Genre findByName(String name);
-
     Genre update(Long id, Genre genre);
 }

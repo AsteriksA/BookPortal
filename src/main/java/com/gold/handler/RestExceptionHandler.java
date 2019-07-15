@@ -60,7 +60,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // 500
-    @ExceptionHandler({ NullPointerException.class, /*IllegalArgumentException.class,*/ IllegalStateException.class })
+    @ExceptionHandler({ NullPointerException.class,IllegalStateException.class })
     public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
         logger.error("500 Status Code", ex);
         final String bodyOfResponse = ex.getMessage();

@@ -37,7 +37,7 @@ public class AuthorServiceImplTest {
     private Long authorId = 1L;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         authorService = new AuthorServiceImpl(authorRepository, entityMapper);
         entity = new AuthorEntity();
         author = new Author();
@@ -70,7 +70,7 @@ public class AuthorServiceImplTest {
 
     @Test
     public void successfulRemoveAuthor() {
-        authorService.remove(authorId);
+        authorService.delete(authorId);
         verify(authorRepository, times(1)).deleteById(authorId);
     }
 

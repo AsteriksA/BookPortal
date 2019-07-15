@@ -1,6 +1,5 @@
 package com.gold.model;
 
-import com.gold.dto.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,10 +11,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -56,14 +53,4 @@ public class UserEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date lastPasswordResetDate;
-
-    public static UserEntity from(User user) {
-        return UserEntity.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .activationCode(UUID.randomUUID().toString())
-                .roles(Collections.singleton(RoleEntity.ROLE_USER))
-                .build();
-    }
-
 }

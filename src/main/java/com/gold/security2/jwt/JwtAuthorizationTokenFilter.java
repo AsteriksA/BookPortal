@@ -28,20 +28,16 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
-    private final String tokenHeader;
 
-    public JwtAuthorizationTokenFilter(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil, @Value(".tokenHeader") String tokenHeader) {
+    public JwtAuthorizationTokenFilter(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService, JwtTokenUtil jwtTokenUtil) {
         this.userDetailsService = userDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.tokenHeader = tokenHeader;
     }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         log.debug("processing authentication for '{}'", request.getRequestURL());
 
-//        final String requestHeader = request.getHeader(this.tokenHeader);
         String tokenPayload = request.getHeader(WebSecurityConfig2.AUTHENTICATION_HEADER_NAME);
 
         String username = null;
@@ -72,7 +68,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
                 return;
             }
 
-                        // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
+            // For simple validation it is completely sufficient to just check the token integrity. You don't have to call
             // the database compellingly. Again it's up to you ;)
             if (jwtTokenUtil.validateToken(authToken)) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

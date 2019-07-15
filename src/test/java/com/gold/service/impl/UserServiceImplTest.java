@@ -2,7 +2,6 @@ package com.gold.service.impl;
 
 import com.gold.dto.User;
 import com.gold.form.ChangePasswordForm;
-import com.gold.form.UpdateUserForm;
 import com.gold.model.State;
 import com.gold.model.UserEntity;
 import com.gold.repository.UserRepository;
@@ -105,14 +104,14 @@ public class UserServiceImplTest {
 
     @Test
     public void successfulDeleteUserById() {
-        userService.remove(userId);
+        userService.delete(userId);
         verify(userRepository, times(1)).deleteById(userId);
     }
 
     @Test
     public void successfulUpdateUser() {
         String mail = "tt@gm.com";
-        UpdateUserForm userForm = new UpdateUserForm();
+        User userForm = new User();
         userForm.setEmail(mail);
         user.setEmail(mail);
 
@@ -162,7 +161,7 @@ public class UserServiceImplTest {
     public void successfulBannedUserById() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
         
-        userService.bannedById(userId);
+        userService.bannedById(userId, Boolean.TRUE);
         
         verify(userRepository, times(1)).findById(userId);
         verify(userRepository, times(1)).save(userEntity);
