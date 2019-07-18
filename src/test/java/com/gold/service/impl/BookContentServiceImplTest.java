@@ -31,7 +31,7 @@ public class BookContentServiceImplTest {
     private Long bookContentId = 1L;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         bookContentService = new BookContentServiceImpl(bookContentRepository, entityMapper);
         entity = new BookContentEntity();
         bookContent = new BookContent();
@@ -52,7 +52,7 @@ public class BookContentServiceImplTest {
     public void successfulRemoveBookContent() {
         when(bookContentRepository.findById(bookContentId)).thenReturn(Optional.of(entity));
 
-        bookContentService.remove(bookContentId);
+        bookContentService.delete(bookContentId);
         verify(bookContentRepository, times(1)).delete(entity);
     }
 

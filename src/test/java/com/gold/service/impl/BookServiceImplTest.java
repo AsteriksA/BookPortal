@@ -1,7 +1,6 @@
 package com.gold.service.impl;
 
 import com.gold.dto.Book;
-import com.gold.form.BookForm;
 import com.gold.model.BookEntity;
 import com.gold.model.GenreEntity;
 import com.gold.model.PublisherEntity;
@@ -50,7 +49,7 @@ public class BookServiceImplTest {
     private Long bookId = 1L;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         bookService =
                 new BookServiceImpl(bookRepository, authorRepository, genreRepository, publisherRepository, entityMapper);
         entity = new BookEntity();
@@ -73,7 +72,7 @@ public class BookServiceImplTest {
 
     @Test
     public void successfulAddBook() throws IOException {
-        BookForm bookForm = new BookForm();
+        Book bookForm = new Book();
         entity.setAuthors(Collections.emptySet());
         entity.setGenre(new GenreEntity());
         entity.setPublisher(new PublisherEntity());
@@ -93,7 +92,7 @@ public class BookServiceImplTest {
 
     @Test
     public void successfulRemoveBook() {
-        bookService.remove(bookId);
+        bookService.delete(bookId);
         verify(bookRepository, times(1)).deleteById(bookId);
     }
 
@@ -135,8 +134,8 @@ public class BookServiceImplTest {
     @Test
     public void successfulSearchingBook() {
         String searchText = "some words";
-        bookService.findBySearch(searchText);
-        verify(bookRepository, times(1)).findBySearch(searchText.split(" "));
+        bookService.findBooksByParam(searchText);
+        verify(bookRepository, times(1)).findByParam(searchText.split(" "));
     }
 
     @Test

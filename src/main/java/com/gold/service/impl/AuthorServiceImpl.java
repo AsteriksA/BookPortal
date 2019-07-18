@@ -36,7 +36,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void remove(Long id) {
+    public void delete(Long id) {
         authorRepository.deleteById(id);
     }
 
@@ -49,7 +49,7 @@ public class AuthorServiceImpl implements AuthorService {
         return mapper.convertToDto(authorRepository.save(entity), Author.class);
     }
 
-    //TODO: change the method. Maybe remove this method, cause a method findBySearch() is existed in a bookService.
+    //TODO: change the method. Maybe delete this method, cause a method findBooksByParam() is existed in a bookService.
     @Override
     public List<Author> findByFirstNameAndSecondName(String firstName, String secondName) {
         List<AuthorEntity> authorEntities = authorRepository.findByFirstNameOrLastName(firstName, secondName);

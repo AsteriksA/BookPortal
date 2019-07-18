@@ -22,7 +22,7 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
     @Query("SELECT book FROM BookEntity book LEFT JOIN book.authors AS author " +
             "WHERE book.name IN :parameters OR author.firstName IN :parameters " +
             "OR author.lastName IN :parameters")
-    List<BookEntity> findBySearch(@Param("parameters") String... parameters);
+    List<BookEntity> findByParam(@Param("parameters") String... parameters);
 
     @EntityGraph(value = "allJoins", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT b from BookEntity b WHERE b.id = :id")
@@ -31,6 +31,4 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
     @EntityGraph(value = "withoutBookContent", type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT b from BookEntity b WHERE b.id = :id")
     BookEntity findBookByIdWithoutBookContent(@Param("id") Long id);
-
-
 }

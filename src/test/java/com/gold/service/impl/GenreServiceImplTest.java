@@ -1,6 +1,5 @@
 package com.gold.service.impl;
 
-import com.gold.dto.Author;
 import com.gold.dto.Genre;
 import com.gold.model.GenreEntity;
 import com.gold.repository.GenreRepository;
@@ -35,7 +34,7 @@ public class GenreServiceImplTest {
     private Long genreId = 1L;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         genreService = new GenreServiceImpl(genreRepository, entityMapper);
         entity = new GenreEntity();
         genre = new Genre();
@@ -66,7 +65,7 @@ public class GenreServiceImplTest {
 
     @Test
     public void successfulRemoveGenre() {
-        genreService.remove(genreId);
+        genreService.delete(genreId);
         verify(genreRepository, times(1)).deleteById(genreId);
     }
 

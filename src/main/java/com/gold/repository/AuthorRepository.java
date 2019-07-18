@@ -14,7 +14,4 @@ public interface AuthorRepository extends JpaRepository<AuthorEntity, Long> {
     AuthorEntity findByFirstNameAndLastName(String firstName, String secondName);
     void deleteById(Long id);
     Optional<AuthorEntity> findById(Long id);
-
-//    @Query("SELECT a.bookEntities FROM AuthorEntity a JOIN FETCH a.bookEntities WHERE a.id= :id")
-//    List<BookEntity> findAllBooks(Long id);
 }

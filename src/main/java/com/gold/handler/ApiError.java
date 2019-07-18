@@ -21,7 +21,7 @@ import java.util.Set;
 @Data
 @JsonTypeIdResolver(LowerCaseClassNameResolver.class)
 @JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.CUSTOM, property = "error", visible = true)
-public class ApiError {
+class ApiError {
 
     private HttpStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
@@ -125,7 +125,6 @@ class ApiValidationError extends ApiSubError {
         this.message = message;
     }
 }
-
 
 class LowerCaseClassNameResolver extends TypeIdResolverBase {
 

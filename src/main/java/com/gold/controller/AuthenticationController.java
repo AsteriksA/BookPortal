@@ -1,7 +1,7 @@
 package com.gold.controller;
 
 import com.gold.config.WebSecurityConfig2;
-import com.gold.form.RestorePasswordForm;
+import com.gold.dto.User;
 import com.gold.form.SignUpForm;
 import com.gold.security2.service.JwtAuthenticationRequest;
 import com.gold.service.interfaces.AuthenticationService;
@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.gold.config.WebSecurityConfig2.API_URL;
+
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(API_URL +"/auth")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthenticationController {
 
@@ -30,7 +32,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("activate/{code}")
-    public void activate(@PathVariable String code) {
+    public void activateUserByRegistrationCode(@PathVariable String code) {
         authenticationService.activateUser(code);
     }
 
@@ -39,21 +41,21 @@ public class AuthenticationController {
         return authenticationService.createAuthenticationToken(authenticationRequest);
     }
 
-    @PostMapping("forgotPassword")
-    public void restorePassword(@RequestBody RestorePasswordForm passwordForm) {
+    @PostMapping("restore_password")
+    public void restorePassword(@RequestBody User passwordForm) {
         authenticationService.restorePassword(passwordForm);
     }
 
-    @GetMapping("refresh")
+    @GetMapping("refresh_token")
     public ResponseEntity<?> refreshAndGetAuthenticationToken(HttpServletRequest request) {
         String tokenPayload = request.getHeader(WebSecurityConfig2.AUTHENTICATION_HEADER_NAME);
         return authenticationService.refreshToken(tokenPayload);
     }
 
-//    @GetMapping("/logout")
-//    public ResponseEntity<Object> logout(@RequestHeader("Lock-Token") String token) {
-//        authenticationService.logout(token);
-//        return ResponseEntity.ok().build();
-//    }
+//    TODO: implement this method
+    @GetMapping("/logout")
+    public void logout() {
+      throw  new UnsupportedOperationException();
+    }
 
 }

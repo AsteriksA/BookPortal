@@ -26,5 +26,4 @@ public class MailService {
 
         mailSender.send(mailMessage);
     }
-
 }
