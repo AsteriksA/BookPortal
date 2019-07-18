@@ -67,7 +67,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User update(Long id, User userForm) {
         UserEntity entity = getById(id);
-        mapper.convertToEntity(userForm, entity);
+        entity.setUsername(userForm.getUsername());
+        entity.setEmail(userForm.getEmail());
         userRepository.save(entity);
         return mapper.convertToDto(entity, User.class);
     }
