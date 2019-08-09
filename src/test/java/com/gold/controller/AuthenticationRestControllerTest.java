@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gold.app.Application;
 import com.gold.model.RoleEntity;
 import com.gold.model.UserEntity;
-import com.gold.security2.jwt.JwtTokenUtil;
-import com.gold.security2.jwt.JwtUser;
-import com.gold.security2.jwt.JwtUserFactory;
-import com.gold.security2.service.JwtAuthenticationRequest;
-import com.gold.security2.service.JwtUserDetailsService;
+import com.gold.security.jwt.JwtTokenUtil;
+import com.gold.security.jwt.JwtUser;
+import com.gold.security.jwt.JwtUserFactory;
+import com.gold.security.service.JwtAuthenticationRequest;
+import com.gold.security.service.JwtUserDetailsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ public class AuthenticationRestControllerTest {
 
     private MockMvc mvc;
 
-//    TODO: If I config this class by @SpringBootTest, Do these fields(context, authManager) need?
+//    TODO: If I config this class by @SpringBootTest, Are these fields(context, authManager) needed?
 
     @Autowired
     private WebApplicationContext context;

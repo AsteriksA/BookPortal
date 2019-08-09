@@ -1,4 +1,4 @@
-package com.gold.security2.service;
+package com.gold.security.service;
 
 public class AuthenticationException extends RuntimeException {
     public AuthenticationException(String message, Throwable cause) {

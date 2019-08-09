@@ -33,6 +33,11 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
+    public Genre findByBookId(Long bookId) {
+        return mapper.convertToDto(genreRepository.findByBookId(bookId), Genre.class);
+    }
+
+    @Override
     public Genre findOne(Long id) {
         return mapper.convertToDto(getGenre(id), Genre.class);
     }

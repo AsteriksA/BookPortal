@@ -161,7 +161,7 @@ public class UserServiceImplTest {
     public void successfulBannedUserById() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
         
-        userService.bannedById(userId, Boolean.TRUE);
+        userService.banById(userId, Boolean.TRUE);
         
         verify(userRepository, times(1)).findById(userId);
         verify(userRepository, times(1)).save(userEntity);

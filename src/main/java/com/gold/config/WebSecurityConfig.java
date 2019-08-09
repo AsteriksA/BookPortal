@@ -1,8 +1,8 @@
 package com.gold.config;
 
-import com.gold.security2.jwt.JwtAuthenticationEntryPoint;
-import com.gold.security2.jwt.JwtAuthorizationTokenFilter;
-import com.gold.security2.service.JwtUserDetailsService;
+import com.gold.security.jwt.JwtAuthenticationEntryPoint;
+import com.gold.security.jwt.JwtAuthorizationTokenFilter;
+import com.gold.security.service.JwtUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class WebSecurityConfig2 extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
     public static final String API_URL = "/api";
@@ -33,7 +33,7 @@ public class WebSecurityConfig2 extends WebSecurityConfigurerAdapter {
     private static final String HEAD_URL = "/api/department/*";
     private static final String ACTIVATE_URL = "/api/auth/activate/*";
     private static final String LOGIN_URL = "/api/auth/login";
-    private static final String SIGN_UP_URL = "/api/auth/signup";
+    private static final String SIGN_UP_URL = "/api/auth/sign_up";
     private static final String REFRESH_TOKEN_URL = "/api/auth/refresh";
 
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;

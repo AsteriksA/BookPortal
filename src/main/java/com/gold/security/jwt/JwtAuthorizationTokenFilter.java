@@ -1,10 +1,9 @@
-package com.gold.security2.jwt;
+package com.gold.security.jwt;
 
-import com.gold.config.WebSecurityConfig2;
+import com.gold.config.WebSecurityConfig;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,7 +37,7 @@ public class JwtAuthorizationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         log.debug("processing authentication for '{}'", request.getRequestURL());
 
-        String tokenPayload = request.getHeader(WebSecurityConfig2.AUTHENTICATION_HEADER_NAME);
+        String tokenPayload = request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME);
 
         String username = null;
         String authToken = null;

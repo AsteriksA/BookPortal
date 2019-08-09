@@ -1,4 +1,4 @@
-package com.gold.security2.jwt;
+package com.gold.security.jwt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gold.model.State;

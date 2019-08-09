@@ -8,4 +8,5 @@ public interface AuthorService extends BaseService<Author, Long> {
 
     Author update(Long id, Author author);
     List<Author> findByFirstNameAndSecondName(String firstName, String secondName);
+    List<Author> findByBookId(Long bookId);
 }

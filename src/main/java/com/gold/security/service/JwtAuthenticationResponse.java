@@ -1,4 +1,4 @@
-package com.gold.security2.service;
+package com.gold.security.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.gold.config.WebSecurityConfig2.API_URL;
+import static com.gold.config.WebSecurityConfig.API_URL;
 
 @RestController
 @RequestMapping(API_URL + "/admin")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AdminController {
-
     private final UserService userService;
 
     @JsonView(View.Internal.class)
@@ -37,7 +36,7 @@ public class AdminController {
     }
 
     @PutMapping("/users/{userId}")
-    public void bannedUser(@PathVariable Long userId, @RequestParam(name="ban") Boolean isBan) {
-        userService.bannedById(userId, isBan);
+    public User banUserById(@PathVariable Long userId, @RequestParam(name="isBanned") Boolean isBanned) {
+        return userService.banById(userId, isBanned);
     }
 }

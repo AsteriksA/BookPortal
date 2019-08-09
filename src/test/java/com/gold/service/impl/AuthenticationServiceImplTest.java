@@ -2,7 +2,7 @@ package com.gold.service.impl;
 
 import com.gold.app.Application;
 import com.gold.repository.UserRepository;
-import com.gold.security2.jwt.JwtTokenUtil;
+import com.gold.security.jwt.JwtTokenUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

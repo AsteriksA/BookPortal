@@ -3,7 +3,7 @@ package com.gold.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.gold.dto.User;
 import com.gold.form.ChangePasswordForm;
-import com.gold.security2.jwt.JwtUser;
+import com.gold.security.jwt.JwtUser;
 import com.gold.service.interfaces.UserService;
 import com.gold.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
-import static com.gold.config.WebSecurityConfig2.API_URL;
+import static com.gold.config.WebSecurityConfig.API_URL;
 
 @RestController
 @RequestMapping(API_URL + "/users")
 public class UserController {
-
     private UserService userService;
 
     @Autowired

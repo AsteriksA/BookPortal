@@ -28,6 +28,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public List<Author> findByBookId(Long bookId) {
+        return mapper.convertToDto(authorRepository.findByBookId(bookId), Author.class);
+    }
+
+    @Override
     @Transactional
     public Author add(Author author) {
         AuthorEntity entity = authorRepository.save(mapper.convertToEntity(author, AuthorEntity.class));

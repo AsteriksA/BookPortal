@@ -20,9 +20,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
-//@RunWith(SpringRunner.class)
-//@SpringBootTest(classes = Application.class)
 @RunWith(MockitoJUnitRunner.class)
 public class AuthorServiceImplTest {
 

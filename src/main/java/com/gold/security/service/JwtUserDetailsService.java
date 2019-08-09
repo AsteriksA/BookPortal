@@ -1,8 +1,8 @@
-package com.gold.security2.service;
+package com.gold.security.service;
 
 import com.gold.model.UserEntity;
 import com.gold.repository.UserRepository;
-import com.gold.security2.jwt.JwtUserFactory;
+import com.gold.security.jwt.JwtUserFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -6,11 +6,11 @@ import com.gold.model.RoleEntity;
 import com.gold.model.State;
 import com.gold.model.UserEntity;
 import com.gold.repository.UserRepository;
-import com.gold.security2.jwt.JwtTokenUtil;
-import com.gold.security2.jwt.JwtUser;
-import com.gold.security2.service.AuthenticationException;
-import com.gold.security2.service.JwtAuthenticationRequest;
-import com.gold.security2.service.JwtAuthenticationResponse;
+import com.gold.security.jwt.JwtTokenUtil;
+import com.gold.security.jwt.JwtUser;
+import com.gold.security.service.AuthenticationException;
+import com.gold.security.service.JwtAuthenticationRequest;
+import com.gold.security.service.JwtAuthenticationResponse;
 import com.gold.service.interfaces.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.RandomStringUtils;
@@ -112,7 +112,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 //    TODO: invoke two times loadByUsername() in this method
     @Override
-    public ResponseEntity<?> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
+    public ResponseEntity<JwtAuthenticationResponse> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -147,7 +147,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public ResponseEntity<?> refreshToken(String tokenPayload) {
+    public ResponseEntity<JwtAuthenticationResponse> refreshToken(String tokenPayload) {
         String token = tokenPayload.substring(7);
         String username = jwtTokenUtil.getUsernameFromToken(token);
         JwtUser user = (JwtUser) userDetailsService.loadUserByUsername(username);

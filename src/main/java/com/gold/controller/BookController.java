@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-import static com.gold.config.WebSecurityConfig2.API_URL;
+import static com.gold.config.WebSecurityConfig.API_URL;
 
 @RestController
 @RequestMapping(API_URL)
@@ -53,7 +53,7 @@ public class BookController {
         bookService.update(id, book);
     }
 
-    //    TODO: return object or void
+    //    TODO: return object or void?
     @PutMapping("books/rating/{bookId}")
     public void changeRating(@PathVariable Long bookId,
                              @RequestParam(value = "rating") Integer rating) {

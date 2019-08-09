@@ -33,6 +33,11 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
+    public Publisher findByBookId(Long bookId) {
+        return mapper.convertToDto(publisherRepository.findByBookId(bookId), Publisher.class);
+    }
+
+    @Override
     public Publisher findOne(Long id) {
         return mapper.convertToDto(getPublisher(id), Publisher.class);
     }
@@ -50,12 +55,13 @@ public class PublisherServiceImpl implements PublisherService {
         publisherRepository.deleteById(id);
     }
 
+    @Override
     @Transactional
-    public void update(Long id, Publisher publisher) {
+    public Publisher update(Long id, Publisher publisher) {
         PublisherEntity entity = getPublisher(id);
         notNull(entity);
         mapper.convertToEntity(publisher, entity);
-        publisherRepository.save(entity);
+        return mapper.convertToDto(publisherRepository.save(entity), Publisher.class);
     }
 
     private PublisherEntity getPublisher(Long id) {

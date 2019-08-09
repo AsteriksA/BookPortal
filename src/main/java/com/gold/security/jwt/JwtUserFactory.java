@@ -1,4 +1,4 @@
-package com.gold.security2.jwt;
+package com.gold.security.jwt;
 
 import com.gold.model.UserEntity;
 import lombok.NoArgsConstructor;

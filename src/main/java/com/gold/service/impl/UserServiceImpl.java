@@ -91,8 +91,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User bannedById(Long id, Boolean isBan) {
-        if (!isBan){
+    public User banById(Long id, Boolean isBanned) {
+        if (!isBanned){
             return mapper.convertToDto(this.getById(id), User.class);
         }
         UserEntity entity = getById(id);
