@@ -110,13 +110,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(userCandidate);
     }
 
-//    TODO: invoke two times loadByUsername() in this method
     @Override
     public ResponseEntity<JwtAuthenticationResponse> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest) throws AuthenticationException {
-
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
-        // Reload password post-security so we can generate the token
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         final String accessToken = jwtTokenUtil.generateAccessToken(userDetails);
         final String refreshToken = jwtTokenUtil.generateRefreshToken(userDetails);
@@ -124,13 +121,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tokenMap.put("accessToken", accessToken);
         tokenMap.put("refreshToken", refreshToken);
 
-        // Return the token
         return ResponseEntity.ok(new JwtAuthenticationResponse(tokenMap));
     }
 
-    /**
-     * Authenticates the user. If something is wrong, an {@link AuthenticationException} will be thrown
-     */
     private void authenticate(String username, String password) {
         Objects.requireNonNull(username);
         Objects.requireNonNull(password);
@@ -162,5 +155,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } else {
             return ResponseEntity.badRequest().body(null);
         }
+    }
+
+    @Override
+    public void removeToken(String tokenPayload) {
+        String token = tokenPayload.substring(7);
+        jwtTokenUtil.removeToken(token);
     }
 }

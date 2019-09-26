@@ -1,10 +1,12 @@
 package com.gold.service.impl;
 
+import com.gold.config.WebSecurityConfig;
 import com.gold.dto.User;
 import com.gold.form.ChangePasswordForm;
 import com.gold.model.State;
 import com.gold.model.UserEntity;
 import com.gold.repository.UserRepository;
+import com.gold.service.interfaces.AuthenticationService;
 import com.gold.service.interfaces.UserService;
 import com.gold.util.EntityUtils;
 import com.gold.util.EntityMapper;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j
@@ -27,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EntityMapper mapper;
+    private final AuthenticationService authenticationService;
 
     @Override
     public List<User> findAll() {
@@ -83,6 +87,18 @@ public class UserServiceImpl implements UserService {
         return mapper.convertToDto(user, User.class);
     }
 
+    @Override
+    @Transactional
+    public void changeName(HttpServletRequest request, Long userId, String name) {
+        UserEntity user = getById(userId);
+        if (!user.getUsername().equals(name)) {
+            user.setUsername(name);
+            userRepository.save(user);
+            String tokenPayload = request.getHeader(WebSecurityConfig.TOKEN_HEADER);
+            authenticationService.removeToken(tokenPayload);
+        }
+    }
+
     private void checkPassword(String passwordForm, String entityPassword) {
         if (!passwordEncoder.matches(passwordForm, entityPassword)) {
             throw new IllegalArgumentException("The password doesn't match");
@@ -91,12 +107,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User banById(Long id, Boolean isBanned) {
-        if (!isBanned){
+    public User changeUserState(Long id, String state) {
+        State stateFromUrl = State.valueOf(state);
+        UserEntity entity = getById(id);
+
+        if (entity.getState().equals(stateFromUrl)) {
             return mapper.convertToDto(this.getById(id), User.class);
         }
-        UserEntity entity = getById(id);
-        entity.setState(State.BANNED);
+
+        entity.setState(stateFromUrl);
         return mapper.convertToDto(userRepository.save(entity), User.class);
     }
 

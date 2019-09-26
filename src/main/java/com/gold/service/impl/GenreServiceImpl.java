@@ -46,7 +46,7 @@ public class GenreServiceImpl implements GenreService {
     @Transactional
     public Genre add(Genre genre) {
         GenreEntity entity = mapper.convertToEntity(genre, GenreEntity.class);
-        return mapper.convertToDto(genreRepository.save(entity),Genre.class);
+        return mapper.convertToDto(genreRepository.save(entity), Genre.class);
     }
 
     @Override

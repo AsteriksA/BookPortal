@@ -16,6 +16,7 @@ import com.gold.util.EntityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,18 +39,16 @@ public class BookServiceImpl implements BookService {
     private final PublisherRepository publisherRepository;
     private final EntityMapper mapper;
 
-      @Override
+    @Override
     public List<Book> findAll() {
         return mapper.convertToDto(bookRepository.findAll(), Book.class);
     }
 
-//    TODO: Delete this method? because there is already a universal method for finding the title of the book and the author
     @Override
     public List<Book> findByName(String name) {
         return mapper.convertToDto(bookRepository.findByNameLike(name), Book.class);
     }
 
-//    TODO: Delete this method? because there is already a universal method for finding the title of the book and the author
     @Override
     public List<Book> findByAuthor(String authorName) {
         return null;
@@ -60,7 +59,6 @@ public class BookServiceImpl implements BookService {
         return mapper.convertToDto(bookRepository.findByGenre_Name(genreName), Book.class);
     }
 
-//    TODO: Delete this method? I’m unlikely to implement publisher search functionality
     @Override
     public List<Book> findByPublisher(String publisherName) {
         return mapper.convertToDto(bookRepository.findByPublisher_Name(publisherName), Book.class);
@@ -74,7 +72,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void add(String book, MultipartFile imageFile, MultipartFile contentFile){
+    public void add(String book, MultipartFile imageFile, MultipartFile contentFile) {
         throw new UnsupportedOperationException();
     }
 
@@ -133,11 +131,11 @@ public class BookServiceImpl implements BookService {
 
     private void setAuthors(BookEntity entity) {
         Set<AuthorEntity> sourceAuthors = entity.getAuthors();
-        Set<AuthorEntity> authorEntities=new HashSet<>();
+        Set<AuthorEntity> authorEntities = new HashSet<>();
 
         for (AuthorEntity author : sourceAuthors) {
             AuthorEntity persistAuthor =
-                    authorRepository.findByFirstNameAndLastName(author.getFirstName(),author.getLastName());
+                    authorRepository.findByFirstNameAndLastName(author.getFirstName(), author.getLastName());
             if (persistAuthor != null) {
                 persistAuthor.getBooks().add(entity);
                 author = persistAuthor;
@@ -177,14 +175,14 @@ public class BookServiceImpl implements BookService {
     }
 
     private Double calculateRating(BookEntity entity, Integer voteCount, Integer rating) {
-          Double totalRating = entity.getRating()*voteCount+rating;
-          voteCount++;
-          return totalRating/voteCount;
+        Double totalRating = entity.getRating() * voteCount + rating;
+        voteCount++;
+        return totalRating / voteCount;
     }
 
     private BookEntity getEntity(Long id) {
         return bookRepository.findById(id).
-                orElseThrow(()->new EntityNotFoundException("Book doesn't exist"));
+                orElseThrow(() -> new EntityNotFoundException("Book doesn't exist"));
     }
 
     @Override
@@ -192,7 +190,7 @@ public class BookServiceImpl implements BookService {
         if (param == null) {
             return this.findAll();
         }
-        String[] params = param.split(" ");
+        String[] params = param.trim().split("\\s+");
         List<BookEntity> books = bookRepository.findByParam(params);
         return mapper.convertToDto(books, Book.class);
     }

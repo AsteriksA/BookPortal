@@ -16,8 +16,6 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
     List<BookEntity> findByNameLike(String name);
     List<BookEntity> findByGenre_Name(String genreName);
     List<BookEntity> findByPublisher_Name(String publisherName);
-    void deleteById(Long id);
-    Optional<BookEntity> findById(Long id);
 
     @Query("SELECT book FROM BookEntity book LEFT JOIN book.authors AS author " +
             "WHERE book.name IN :parameters OR author.firstName IN :parameters " +

@@ -15,4 +15,5 @@ public interface AuthenticationService {
 
     ResponseEntity<JwtAuthenticationResponse> createAuthenticationToken(JwtAuthenticationRequest authenticationRequest) throws AuthenticationException;
     ResponseEntity<JwtAuthenticationResponse> refreshToken(String tokenPayload);
+    void removeToken(String token);
 }

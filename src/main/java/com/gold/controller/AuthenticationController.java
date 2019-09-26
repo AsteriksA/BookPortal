@@ -48,14 +48,14 @@ public class AuthenticationController {
 
     @GetMapping("/refresh_token")
     public ResponseEntity<JwtAuthenticationResponse> refreshAndGetAuthenticationToken(HttpServletRequest request) {
-        String tokenPayload = request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME);
+        String tokenPayload = request.getHeader(WebSecurityConfig.TOKEN_HEADER);
         return authenticationService.refreshToken(tokenPayload);
     }
 
-//    TODO: implement this method
     @GetMapping("/logout")
-    public void logout() {
-      throw  new UnsupportedOperationException();
+    public void logout(HttpServletRequest request) {
+        String tokenPayload = request.getHeader(WebSecurityConfig.TOKEN_HEADER);
+        authenticationService.removeToken(tokenPayload);
     }
 
 }

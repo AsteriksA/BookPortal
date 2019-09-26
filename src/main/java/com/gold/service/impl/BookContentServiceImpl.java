@@ -23,7 +23,7 @@ public class BookContentServiceImpl implements BookContentService {
     private final BookContentRepository bookContentRepository;
     private final EntityMapper mapper;
 
-     @Override
+    @Override
     public List<BookContent> findAll() {
         throw new UnsupportedOperationException();
     }
@@ -33,21 +33,18 @@ public class BookContentServiceImpl implements BookContentService {
         return mapper.convertToDto(getEntity(id), BookContent.class);
     }
 
-//    TODO: Is this method necessary? Because the whole book is added in BookService with few arguments.
     @Override
     @Transactional
     public BookContent add(BookContent entity) {
-       return mapper.convertToDto(bookContentRepository
-               .save(mapper.convertToEntity(entity, BookContentEntity.class)), BookContent.class);
+        return mapper.convertToDto(bookContentRepository
+                .save(mapper.convertToEntity(entity, BookContentEntity.class)), BookContent.class);
     }
 
 
-//    TODO: How correct implement delete method? Like this. Get entity by id in the DB then invoke delete method.
-//    Or implement like another methods in other test classes - right away invoke delete by id?
     @Override
     @Transactional
     public void delete(Long id) {
-        bookContentRepository.delete(getEntity(id));
+        bookContentRepository.deleteById(id);
     }
 
     @Override
@@ -60,6 +57,6 @@ public class BookContentServiceImpl implements BookContentService {
     }
 
     private BookContentEntity getEntity(Long id) {
-         return bookContentRepository.findById(id).orElse(null);
+        return bookContentRepository.findById(id).orElse(null);
     }
 }

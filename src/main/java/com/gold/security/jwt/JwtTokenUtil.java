@@ -8,6 +8,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +18,16 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
+@EnableScheduling
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class JwtTokenUtil implements Serializable {
 
+    private static final String REDIS_SET_ACTIVE_SUBJECTS = "active-subjects";
     private static final long serialVersionUID = -3301605591108950415L;
     private Clock clock = DefaultClock.INSTANCE;
 
@@ -40,20 +46,36 @@ public class JwtTokenUtil implements Serializable {
     }
 
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        if (!RedisUtil.INSTANCE.sismember(REDIS_SET_ACTIVE_SUBJECTS, token)) {
+            return null;
+        }
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-            .setSigningKey(jwtSettings.getTokenSigningKey())
-            .parseClaimsJws(token)
-            .getBody();
+                .setSigningKey(jwtSettings.getTokenSigningKey())
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(clock.now());
+    }
+
+    @Async
+    @Scheduled(fixedRate = 1000 * 10 * 60)
+    public void removeExpiredToken() {
+        RedisUtil.INSTANCE.smembers(REDIS_SET_ACTIVE_SUBJECTS);
+
+        Set<String> tokens = RedisUtil.INSTANCE.smembers(REDIS_SET_ACTIVE_SUBJECTS);
+        for (String token : tokens) {
+            if (isTokenExpired(token)) {
+                RedisUtil.INSTANCE.srem(REDIS_SET_ACTIVE_SUBJECTS, token);
+            }
+        }
     }
 
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
@@ -82,23 +104,30 @@ public class JwtTokenUtil implements Serializable {
         return doGenerateToken(claims, userDetails.getUsername(), expiration);
     }
 
+    public void removeToken(String token) {
+        RedisUtil.INSTANCE.srem(REDIS_SET_ACTIVE_SUBJECTS, token);
+    }
+
     private String doGenerateToken(Map<String, Object> claims, String subject, Long expiration) {
         final Date createdDate = clock.now();
         final Date expirationDate = calculateExpirationDate(createdDate, expiration);
 
-        return Jwts.builder()
-            .setClaims(claims)
-            .setSubject(subject)
-            .setIssuedAt(createdDate)
-            .setExpiration(expirationDate)
-            .signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey())
-            .compact();
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
+                .setIssuedAt(createdDate)
+                .setExpiration(expirationDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSettings.getTokenSigningKey())
+                .compact();
+
+        RedisUtil.INSTANCE.sadd(REDIS_SET_ACTIVE_SUBJECTS, token);
+        return token;
     }
 
     public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
         final Date created = getIssuedAtDateFromToken(token);
         return !isCreatedBeforeLastPasswordReset(created, lastPasswordReset)
-            && (!isTokenExpired(token) || ignoreTokenExpiration(token));
+                && (!isTokenExpired(token) || ignoreTokenExpiration(token));
     }
 
     Boolean validateToken(String token) {

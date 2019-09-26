@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public static final String AUTHENTICATION_HEADER_NAME = "Authorization";
+    public static final String TOKEN_HEADER = "Authorization";
     public static final String API_URL = "/api";
     private static final String API_ROOT_URL = "/api/**";
     private static final String ADMIN_URL = "/api/admin/*";

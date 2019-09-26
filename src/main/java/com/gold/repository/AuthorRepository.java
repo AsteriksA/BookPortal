@@ -14,8 +14,6 @@ public interface AuthorRepository extends JpaRepository<AuthorEntity, Long> {
 
     List<AuthorEntity> findByFirstNameOrLastName(String firstName, String secondName);
     AuthorEntity findByFirstNameAndLastName(String firstName, String secondName);
-    void deleteById(Long id);
-    Optional<AuthorEntity> findById(Long id);
     @Query("SELECT author FROM AuthorEntity author LEFT JOIN author.books as book WHERE book.id=:id")
     List<AuthorEntity> findByBookId(@Param("id") Long id);
 }

@@ -36,7 +36,7 @@ public class AdminController {
     }
 
     @PutMapping("/users/{userId}")
-    public User banUserById(@PathVariable Long userId, @RequestParam(name="isBanned") Boolean isBanned) {
-        return userService.banById(userId, isBanned);
+    public User banUserById(@PathVariable Long userId, @RequestParam(name="state") String state) {
+        return userService.changeUserState(userId, state);
     }
 }

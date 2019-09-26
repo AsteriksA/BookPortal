@@ -1,7 +1,6 @@
 package com.gold.service.interfaces;
 
 import com.gold.dto.Genre;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface GenreService extends BaseService<Genre, Long> {
 

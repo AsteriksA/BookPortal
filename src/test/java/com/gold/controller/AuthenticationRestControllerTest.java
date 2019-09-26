@@ -39,8 +39,6 @@ public class AuthenticationRestControllerTest {
 
     private MockMvc mvc;
 
-//    TODO: If I config this class by @SpringBootTest, Are these fields(context, authManager) needed?
-
     @Autowired
     private WebApplicationContext context;
 

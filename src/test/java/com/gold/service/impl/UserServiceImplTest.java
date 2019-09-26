@@ -5,6 +5,7 @@ import com.gold.form.ChangePasswordForm;
 import com.gold.model.State;
 import com.gold.model.UserEntity;
 import com.gold.repository.UserRepository;
+import com.gold.service.interfaces.AuthenticationService;
 import com.gold.service.interfaces.UserService;
 import com.gold.util.EntityMapper;
 import org.junit.Before;
@@ -41,12 +42,14 @@ public class UserServiceImplTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private EntityMapper mapper;
+    @Mock
+    private AuthenticationService authenticationService;
     private UserEntity userEntity;
     private User user;
 
     @Before
     public void setUp() {
-        userService = new UserServiceImpl(userRepository, passwordEncoder, mapper);
+        userService = new UserServiceImpl(userRepository, passwordEncoder, mapper, authenticationService);
         userEntity = new UserEntity();
         user = new User();
     }
@@ -161,7 +164,7 @@ public class UserServiceImplTest {
     public void successfulBannedUserById() {
         when(userRepository.findById(userId)).thenReturn(Optional.of(userEntity));
         
-        userService.banById(userId, Boolean.TRUE);
+        userService.changeUserState(userId, "BANNED");
         
         verify(userRepository, times(1)).findById(userId);
         verify(userRepository, times(1)).save(userEntity);

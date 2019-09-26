@@ -53,7 +53,6 @@ public class BookController {
         bookService.update(id, book);
     }
 
-    //    TODO: return object or void?
     @PutMapping("books/rating/{bookId}")
     public void changeRating(@PathVariable Long bookId,
                              @RequestParam(value = "rating") Integer rating) {

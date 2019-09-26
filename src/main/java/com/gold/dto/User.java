@@ -1,6 +1,5 @@
 package com.gold.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.gold.model.RoleEntity;
 import com.gold.view.View;
